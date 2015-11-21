@@ -86,7 +86,7 @@ struct netpoll_info;
  *	Compute the worst case header length according to the protocols
  *	used.
  */
- 
+
 #if !defined(CONFIG_AX25) && !defined(CONFIG_AX25_MODULE) && !defined(CONFIG_TR)
 #define LL_MAX_HEADER	32
 #else
@@ -110,7 +110,7 @@ struct netpoll_info;
  *	Network device statistics. Akin to the 2.0 ether stats but
  *	with byte counters.
  */
- 
+
 struct net_device_stats
 {
 	unsigned long	rx_packets;		/* total packets received	*/
@@ -138,7 +138,7 @@ struct net_device_stats
 	unsigned long	tx_fifo_errors;
 	unsigned long	tx_heartbeat_errors;
 	unsigned long	tx_window_errors;
-	
+
 	/* for cslip etc */
 	unsigned long	rx_compressed;
 	unsigned long	tx_compressed;
@@ -179,14 +179,14 @@ DECLARE_PER_CPU(struct netif_rx_stats, netdev_rx_stat);
 /*
  *	We tag multicasts with these structures.
  */
- 
+
 struct dev_mc_list
-{	
+{
 	struct dev_mc_list	*next;
-	__u8			dmi_addr[MAX_ADDR_LEN];		// ×é²¥Ó²¼şµØÖ·
-	unsigned char		dmi_addrlen;			// ×é²¥Ó²¼şµØÖ·³¤¶È
-	int			dmi_users;						// ²»Í¬µÄ×é²¥IP£¬×ª»»Îª×é²¥MACµÄÊıÄ¿
-	int			dmi_gusers;						// ±êÊ¶ÊÇ²»ÊÇÍ¨¹ıSIOCADDMULTIÑ¡ÏîÌí¼ÓµÄ
+	__u8			dmi_addr[MAX_ADDR_LEN];		// ç»„æ’­ç¡¬ä»¶åœ°å€
+	unsigned char		dmi_addrlen;			// ç»„æ’­ç¡¬ä»¶åœ°å€é•¿åº¦
+	int			dmi_users;						// ä¸åŒçš„ç»„æ’­IPï¼Œè½¬æ¢ä¸ºç»„æ’­MACçš„æ•°ç›®
+	int			dmi_gusers;						// æ ‡è¯†æ˜¯ä¸æ˜¯é€šè¿‡SIOCADDMULTIé€‰é¡¹æ·»åŠ çš„
 };
 
 struct hh_cache
@@ -237,21 +237,21 @@ struct hh_cache
 
 enum netdev_state_t
 {
-	__LINK_STATE_XOFF=0,// ÓÉÓÚÈÈ²å°ÎÍøÂçÉè±¸¡¢»º´æ²»¹»¡¢ÍøÂçÉè±¸Ó²¼ş´íÎó¡¢¹Ø±Õ½ûÖ¹Ó²¼ş£¬´Ó¶ø¹Ø±ÕÅÅ¶Ó¹¦ÄÜ
-	__LINK_STATE_START,	// ÍøÂçÉè±¸´¦ÓÚ¼¤»î×´Ì¬
-	__LINK_STATE_PRESENT,// 
-	__LINK_STATE_SCHED,		// ±êÊ¶ÍøÂçÇı¶¯µÄÊı¾İ·¢ËÍÊÇ·ñÔÚÁ÷Á¿¿ØÖÆµÄµ÷¶ÈÖĞ
-	__LINK_STATE_NOCARRIER,	// ±êÊ¶ÍøÂçÉè±¸´¦ÀíÊÇ·ñ¿É´«µİ×´Ì¬
-	__LINK_STATE_RX_SCHED,	// ±êÊ¶ÕıÔÚÂÖÑ¯½ÓÊÕÊı¾İ°ü
-	__LINK_STATE_LINKWATCH_PENDING,	// ÍøÂçÉè±¸µÄÁ¬½Ó×´Ì¬·¢Éú¸Ä±ä£¬ÕıÔÚ´¦Àí¸Ä±ä¹ı³ÌÖĞ
-	__LINK_STATE_DORMANT,		
-	__LINK_STATE_QDISC_RUNNING,	// Á÷Á¿¿ØÖÆ£¬ÕıÔÚµ÷¶È¶ÓÁĞ¹ı³ÌÖĞ
+	__LINK_STATE_XOFF=0,// ç”±äºçƒ­æ’æ‹”ç½‘ç»œè®¾å¤‡ã€ç¼“å­˜ä¸å¤Ÿã€ç½‘ç»œè®¾å¤‡ç¡¬ä»¶é”™è¯¯ã€å…³é—­ç¦æ­¢ç¡¬ä»¶ï¼Œä»è€Œå…³é—­æ’é˜ŸåŠŸèƒ½
+	__LINK_STATE_START,	// ç½‘ç»œè®¾å¤‡å¤„äºæ¿€æ´»çŠ¶æ€
+	__LINK_STATE_PRESENT,//
+	__LINK_STATE_SCHED,		// æ ‡è¯†ç½‘ç»œé©±åŠ¨çš„æ•°æ®å‘é€æ˜¯å¦åœ¨æµé‡æ§åˆ¶çš„è°ƒåº¦ä¸­
+	__LINK_STATE_NOCARRIER,	// æ ‡è¯†ç½‘ç»œè®¾å¤‡å¤„ç†æ˜¯å¦å¯ä¼ é€’çŠ¶æ€
+	__LINK_STATE_RX_SCHED,	// æ ‡è¯†æ­£åœ¨è½®è¯¢æ¥æ”¶æ•°æ®åŒ…
+	__LINK_STATE_LINKWATCH_PENDING,	// ç½‘ç»œè®¾å¤‡çš„è¿æ¥çŠ¶æ€å‘ç”Ÿæ”¹å˜ï¼Œæ­£åœ¨å¤„ç†æ”¹å˜è¿‡ç¨‹ä¸­
+	__LINK_STATE_DORMANT,
+	__LINK_STATE_QDISC_RUNNING,	// æµé‡æ§åˆ¶ï¼Œæ­£åœ¨è°ƒåº¦é˜Ÿåˆ—è¿‡ç¨‹ä¸­
 };
 
 
 /*
  * This structure holds at boot time configured netdevice settings. They
- * are then used in the device probing. 
+ * are then used in the device probing.
  */
 struct netdev_boot_setup {
 	char name[IFNAMSIZ];
@@ -279,9 +279,9 @@ struct net_device
 	 * (i.e. as seen by users in the "Space.c" file).  It is the name
 	 * the interface.
 	 */
-	char			name[IFNAMSIZ];			// ÍøÂçÉè±¸Ãû³Æ£¬Í¨³£»á°üº¬Ò»¸ö%d¸ñÊ½»¯·û
+	char			name[IFNAMSIZ];			// ç½‘ç»œè®¾å¤‡åç§°ï¼Œé€šå¸¸ä¼šåŒ…å«ä¸€ä¸ª%dæ ¼å¼åŒ–ç¬¦
 	/* device name hash chain */
-	struct hlist_node	name_hlist;			// °´name×öhashµÄÉ¢ÁĞ½á¹¹£¬¶ÔÓ¦µ½dev_name_headÖĞ
+	struct hlist_node	name_hlist;			// æŒ‰nameåšhashçš„æ•£åˆ—ç»“æ„ï¼Œå¯¹åº”åˆ°dev_name_headä¸­
 
 	/*
 	 *	I/O specific fields
@@ -300,36 +300,36 @@ struct net_device
 	unsigned char		if_port;	/* Selectable AUI, TP,..*/
 	unsigned char		dma;		/* DMA channel		*/
 
-	unsigned long		state;		// ×´Ì¬±êÖ¾ºÍQoSÅÅ¶Ó¹æÔò×´Ì¬  ¼û:  netdev_state_t
-	// Ö¸ÏòÏÂÒ»¸önet_device½á¹¹µÄÖ¸Õë£¬Éè±¸ÖĞËùÓĞµÄnet_device×é³ÉÒ»¸öÁ´±í
+	unsigned long		state;		// çŠ¶æ€æ ‡å¿—å’ŒQoSæ’é˜Ÿè§„åˆ™çŠ¶æ€  è§:  netdev_state_t
+	// æŒ‡å‘ä¸‹ä¸€ä¸ªnet_deviceç»“æ„çš„æŒ‡é’ˆï¼Œè®¾å¤‡ä¸­æ‰€æœ‰çš„net_deviceç»„æˆä¸€ä¸ªé“¾è¡¨
 	struct net_device	*next;
-	// Çı¶¯³ÌĞò³õÊ¼»¯º¯Êı£¬Èç¹û¸ÃÖ¸Õë±»ÉèÖÃ£¬ÔòÔÚregister_netdev()µÄÊ±ºòµ÷ÓÃ£¬Íê³É¶Ônet_device½á¹¹µÄ³õÊ¼»¯
-	// ÏÖÔÚÓÉÓÚÍøÂçÉè±¸´ó¶àÎªPCI½Ó¿Ú£¬×ö·¨´ó¶àÔÚ×¢²áPCIÇı¶¯ºó¾Í½øĞĞ³õÊ¼»¯£¬ËùÒÔ¸Ã½Ó¿ÚºÜÉÙÊ¹ÓÃ
+	// é©±åŠ¨ç¨‹åºåˆå§‹åŒ–å‡½æ•°ï¼Œå¦‚æœè¯¥æŒ‡é’ˆè¢«è®¾ç½®ï¼Œåˆ™åœ¨register_netdev()çš„æ—¶å€™è°ƒç”¨ï¼Œå®Œæˆå¯¹net_deviceç»“æ„çš„åˆå§‹åŒ–
+	// ç°åœ¨ç”±äºç½‘ç»œè®¾å¤‡å¤§å¤šä¸ºPCIæ¥å£ï¼Œåšæ³•å¤§å¤šåœ¨æ³¨å†ŒPCIé©±åŠ¨åå°±è¿›è¡Œåˆå§‹åŒ–ï¼Œæ‰€ä»¥è¯¥æ¥å£å¾ˆå°‘ä½¿ç”¨
 	int			(*init)(struct net_device *dev);
 
 	/* ------- Fields preinitialized in Space.c finish here ------- */
-	// ½Ó¿ÚÖ§³ÖµÄÌØĞÔ£¬Ò»²¿·ÖÊÇÔÚ½Ó¿Ú³õÊ¼»¯ÆÚ¼äÉèÖÃµÄ¡£
+	// æ¥å£æ”¯æŒçš„ç‰¹æ€§ï¼Œä¸€éƒ¨åˆ†æ˜¯åœ¨æ¥å£åˆå§‹åŒ–æœŸé—´è®¾ç½®çš„ã€‚
 	/* Net device features */
 	unsigned long		features;
-#define NETIF_F_SG		1	/* Scatter/gather IO. */  // Ö§³ÖSG¾ÛºÏ·ÖÉ¢I/O
-#define NETIF_F_IP_CSUM		2	/* Can checksum only TCP/UDP over IPv4. */		// Ö»ÄÜ¼ÆËãIPÖ®ÉÏµÄĞ£ÑéºÍ
-#define NETIF_F_NO_CSUM		4	/* Does not require checksum. F.e. loopack. */	// ²»ĞèÒª¼ÆËãĞ£ÑéºÍ
-#define NETIF_F_HW_CSUM		8	/* Can checksum all the packets. */				// ÓÉÓ²¼ş¼ÆËãĞ£ÑéºÍ
-#define NETIF_F_HIGHDMA		32	/* Can DMA to high memory. */		// Ö§³ÖÔÚ¸ß¶ËÄÚ´æÖĞÊ¹ÓÃDMA
-#define NETIF_F_FRAGLIST	64	/* Scatter/gather IO. */	// Ö§³ÖFRAGLISTÀàĞÍµÄ¾ÛºÏ·ÖÉ¢I/O
+#define NETIF_F_SG		1	/* Scatter/gather IO. */  // æ”¯æŒSGèšåˆåˆ†æ•£I/O
+#define NETIF_F_IP_CSUM		2	/* Can checksum only TCP/UDP over IPv4. */		// åªèƒ½è®¡ç®—IPä¹‹ä¸Šçš„æ ¡éªŒå’Œ
+#define NETIF_F_NO_CSUM		4	/* Does not require checksum. F.e. loopack. */	// ä¸éœ€è¦è®¡ç®—æ ¡éªŒå’Œ
+#define NETIF_F_HW_CSUM		8	/* Can checksum all the packets. */				// ç”±ç¡¬ä»¶è®¡ç®—æ ¡éªŒå’Œ
+#define NETIF_F_HIGHDMA		32	/* Can DMA to high memory. */		// æ”¯æŒåœ¨é«˜ç«¯å†…å­˜ä¸­ä½¿ç”¨DMA
+#define NETIF_F_FRAGLIST	64	/* Scatter/gather IO. */	// æ”¯æŒFRAGLISTç±»å‹çš„èšåˆåˆ†æ•£I/O
 #define NETIF_F_HW_VLAN_TX	128	/* Transmit VLAN hw acceleration */
 #define NETIF_F_HW_VLAN_RX	256	/* Receive VLAN hw acceleration */
 #define NETIF_F_HW_VLAN_FILTER	512	/* Receive filtering on VLAN */
 #define NETIF_F_VLAN_CHALLENGED	1024	/* Device cannot handle VLAN packets */
-#define NETIF_F_GSO		2048	/* Enable software GSO. */	// ±êÊ¶Éè±¸ÖÂ´ÇÄ³ÖÖGSO
-#define NETIF_F_LLTX		4096	/* LockLess TX */		// ±êÊ¶ÍøÂç±¨ÎÄÊä³öÊ±ºò£¬ÊÇ·ñĞèÒªÄÃËø
+#define NETIF_F_GSO		2048	/* Enable software GSO. */	// æ ‡è¯†è®¾å¤‡è‡´è¾æŸç§GSO
+#define NETIF_F_LLTX		4096	/* LockLess TX */		// æ ‡è¯†ç½‘ç»œæŠ¥æ–‡è¾“å‡ºæ—¶å€™ï¼Œæ˜¯å¦éœ€è¦æ‹¿é”
 
 	/* Segmentation offload features */
 #define NETIF_F_GSO_SHIFT	16
 #define NETIF_F_GSO_MASK	0xffff0000
-#define NETIF_F_TSO		(SKB_GSO_TCPV4 << NETIF_F_GSO_SHIFT)		// ±êÊ¶Éè±¸Ö§³ÖTCP¶ÎĞ¶ÔØ
-#define NETIF_F_UFO		(SKB_GSO_UDP << NETIF_F_GSO_SHIFT)			// Ö§³ÖUDP·ÖÆ¬Ğ¶ÔØ
-#define NETIF_F_GSO_ROBUST	(SKB_GSO_DODGY << NETIF_F_GSO_SHIFT)	// 
+#define NETIF_F_TSO		(SKB_GSO_TCPV4 << NETIF_F_GSO_SHIFT)		// æ ‡è¯†è®¾å¤‡æ”¯æŒTCPæ®µå¸è½½
+#define NETIF_F_UFO		(SKB_GSO_UDP << NETIF_F_GSO_SHIFT)			// æ”¯æŒUDPåˆ†ç‰‡å¸è½½
+#define NETIF_F_GSO_ROBUST	(SKB_GSO_DODGY << NETIF_F_GSO_SHIFT)	//
 #define NETIF_F_TSO_ECN		(SKB_GSO_TCP_ECN << NETIF_F_GSO_SHIFT)
 #define NETIF_F_TSO6		(SKB_GSO_TCPV6 << NETIF_F_GSO_SHIFT)
 
@@ -338,14 +338,14 @@ struct net_device
 
 #define NETIF_F_GEN_CSUM	(NETIF_F_NO_CSUM | NETIF_F_HW_CSUM)
 #define NETIF_F_ALL_CSUM	(NETIF_F_IP_CSUM | NETIF_F_GEN_CSUM)
-	// Á´½ÓÄÇĞ©ÒÑ±»µ÷ÓÃ£¬ÓĞÊı¾İ°üÊäÈëµÄÍøÂçÉè±¸
-	struct net_device	*next_sched;	
+	// é“¾æ¥é‚£äº›å·²è¢«è°ƒç”¨ï¼Œæœ‰æ•°æ®åŒ…è¾“å…¥çš„ç½‘ç»œè®¾å¤‡
+	struct net_device	*next_sched;
 
 	/* Interface index. Unique device identifier	*/
-	int			ifindex;	// ÍøÂçÉè±¸Ë÷ÒıºÅ
-	int			iflink;		// ÍøÂçÉè±¸Î¨Ò»±êÊ¶£¬ÓÃÓÚĞéÄâËíµÀÉè±¸
+	int			ifindex;	// ç½‘ç»œè®¾å¤‡ç´¢å¼•å·
+	int			iflink;		// ç½‘ç»œè®¾å¤‡å”¯ä¸€æ ‡è¯†ï¼Œç”¨äºè™šæ‹Ÿéš§é“è®¾å¤‡
 
-	// Ìá¹©¸øÓ¦ÓÃ²ã»ñµÃ½Ó¿ÚÍ³¼ÆĞÅÏ¢µÄ½Ó¿Ú¡£ÀıÈç: ifconfig
+	// æä¾›ç»™åº”ç”¨å±‚è·å¾—æ¥å£ç»Ÿè®¡ä¿¡æ¯çš„æ¥å£ã€‚ä¾‹å¦‚: ifconfig
 	struct net_device_stats* (*get_stats)(struct net_device *dev);
 
 	/* List of functions to handle Wireless Extensions (instead of ioctl).
@@ -353,7 +353,7 @@ struct net_device
 	const struct iw_handler_def *	wireless_handlers;
 	/* Instance data managed by the core of Wireless Extensions. */
 	struct iw_public_data *	wireless_data;
-	// ethtoolµÄ²Ù×÷½Ó¿Ú
+	// ethtoolçš„æ“ä½œæ¥å£
 	const struct ethtool_ops *ethtool_ops;
 
 	/*
@@ -362,11 +362,11 @@ struct net_device
 	 * will (read: may be cleaned up at will).
 	 */
 
-	// ½Ó¿Ú±êÊ¶ÌØĞÔ ¼û: if.hÖĞ IFF_UP IFF_BROADCAST
+	// æ¥å£æ ‡è¯†ç‰¹æ€§ è§: if.hä¸­ IFF_UP IFF_BROADCAST
 	unsigned int		flags;	/* interface flags (a la BSD)	*/
-	unsigned short		gflags;	// ¼ÇÂ¼µ±Ç°ÍøÂçÉè±¸µÄ IFF_PROMISC IFF_ALLMULTI×´Ì¬£¬ÅäºÏflagsÉèÖÃ
-        unsigned short          priv_flags; /* Like 'flags' but invisible to userspace. ÀıÈç: IFF_802_1Q_VLAN */
-	unsigned short		padded;	/* How much padding added by alloc_netdev() */	// 32×Ö½Ú¶ÔÆë
+	unsigned short		gflags;	// è®°å½•å½“å‰ç½‘ç»œè®¾å¤‡çš„ IFF_PROMISC IFF_ALLMULTIçŠ¶æ€ï¼Œé…åˆflagsè®¾ç½®
+        unsigned short          priv_flags; /* Like 'flags' but invisible to userspace. ä¾‹å¦‚: IFF_802_1Q_VLAN */
+	unsigned short		padded;	/* How much padding added by alloc_netdev() */	// 32å­—èŠ‚å¯¹é½
 
 	unsigned char		operstate; /* RFC2863 operstate */
 	unsigned char		link_mode; /* mapping policy to operstate */
@@ -374,26 +374,26 @@ struct net_device
 	unsigned		mtu;	/* interface MTU value		*/
 	unsigned short		type;	/* interface hardware type	*/
 	unsigned short		hard_header_len;	/* hardware hdr length	*/
-	// ÔÚÆô¶¯ÁËbondingÍøÂç¸ºÔØ¾ùºâºó£¬Ö¸ÏòbondingµÄĞéÄâÍøÂçÉè±¸
+	// åœ¨å¯åŠ¨äº†bondingç½‘ç»œè´Ÿè½½å‡è¡¡åï¼ŒæŒ‡å‘bondingçš„è™šæ‹Ÿç½‘ç»œè®¾å¤‡
 	struct net_device	*master; /* Pointer to master device of a group,
 					  * which this device is member of.
 					  */
 
 	/* Interface address info. */
-	unsigned char		perm_addr[MAX_ADDR_LEN]; /* permanent hw address MACµØÖ· */
+	unsigned char		perm_addr[MAX_ADDR_LEN]; /* permanent hw address MACåœ°å€ */
 	unsigned char		addr_len;	/* hardware address length	*/
 	unsigned short          dev_id;		/* for shared network cards */
-	// ÏÂÃæÁ½¸ö×Ö¶ÎÎª×é²¥ĞÅÏ¢£¬mc_list´æ´¢ÉèÖÃµ½¸ÃÍøÂçÉè±¸µÄ×é²¥Ó²¼şµØÖ·£¬mc_countÊÇÏîÊı
+	// ä¸‹é¢ä¸¤ä¸ªå­—æ®µä¸ºç»„æ’­ä¿¡æ¯ï¼Œmc_listå­˜å‚¨è®¾ç½®åˆ°è¯¥ç½‘ç»œè®¾å¤‡çš„ç»„æ’­ç¡¬ä»¶åœ°å€ï¼Œmc_countæ˜¯é¡¹æ•°
 	struct dev_mc_list	*mc_list;	/* Multicast mac addresses	*/
 	int			mc_count;	/* Number of installed mcasts	*/
-	int			promiscuity;		// ÍøÂçÉè±¸»ìÔÓÄ£Ê½¼ÆÊıÆ÷
-	int			allmulti;			// ÍøÂçÉè±¸¶à²¥Ä£Ê½¼ÆÊıÆ÷
+	int			promiscuity;		// ç½‘ç»œè®¾å¤‡æ··æ‚æ¨¡å¼è®¡æ•°å™¨
+	int			allmulti;			// ç½‘ç»œè®¾å¤‡å¤šæ’­æ¨¡å¼è®¡æ•°å™¨
 
 
 	/* Protocol specific pointers */
-	// Ö¸ÏòÌØ¶¨Ğ­ÒéÏà¹ØµÄÅäÖÃ¿é
+	// æŒ‡å‘ç‰¹å®šåè®®ç›¸å…³çš„é…ç½®å—
 	void 			*atalk_ptr;	/* AppleTalk link 	*/
-	void			*ip_ptr;	/* IPv4 specific data	struct in_device*/  
+	void			*ip_ptr;	/* IPv4 specific data	struct in_device*/
 	void                    *dn_ptr;        /* DECnet specific data */
 	void                    *ip6_ptr;       /* IPv6 specific data */
 	void			*ec_ptr;	/* Econet specific data	*/
@@ -401,16 +401,16 @@ struct net_device
 
 /*
  * Cache line mostly used on receive path (including eth_type_trans())
- */	// net_device½á¹¹ÊµÀıÍ¨¹ı¸Ã×Ö¶ÎÁ´½Óµ½softnet_dataµÄpoll_list³ÉÔ±ÉÏ
+ */	// net_deviceç»“æ„å®ä¾‹é€šè¿‡è¯¥å­—æ®µé“¾æ¥åˆ°softnet_dataçš„poll_listæˆå‘˜ä¸Š
 	struct list_head	poll_list ____cacheline_aligned_in_smp;
 					/* Link to poll list	*/
-	// NAPI¼æÈİÇı¶¯³ÌĞòĞèÌá¹©¸Ã·½·¨£¬ÓÃÀ´ÒÔÂÖÑ¯Ä£Ê½²Ù×÷½Ó¿Ú   ÀıÈç: e100_poll  process_backlog
+	// NAPIå…¼å®¹é©±åŠ¨ç¨‹åºéœ€æä¾›è¯¥æ–¹æ³•ï¼Œç”¨æ¥ä»¥è½®è¯¢æ¨¡å¼æ“ä½œæ¥å£   ä¾‹å¦‚: e100_poll  process_backlog
 	int			(*poll) (struct net_device *dev, int *quota);
-	int			quota;	// ¶ÁÈ¡Êı¾İ°üµÄÅä¶î£¬ÓĞnetdev_budget³õÊ¼»¯£¬Ã¿´Î¶ÁÈ¡Êı¾İ°üºó»áĞŞ¸ÄÕâ¸öÖµ¡£µ±Åä¶îĞ¡ÓÚµÈÓÚ0Ê±£¬½áÊøÂÖÑ¯
-	int			weight;	// Êı¾İ°üÊäÈëÈíÖĞ¶ÏÖĞ£¬µ¥¸öÍøÂçÉè±¸¶ÁÈ¡Êı¾İ°üµÄÅä¶î
-	unsigned long		last_rx;	/* Time of last Rx	*/	// ×îºóÒ»´ÎÊÕµ½Êı¾İ°üµÄÊ±¼ä
+	int			quota;	// è¯»å–æ•°æ®åŒ…çš„é…é¢ï¼Œæœ‰netdev_budgetåˆå§‹åŒ–ï¼Œæ¯æ¬¡è¯»å–æ•°æ®åŒ…åä¼šä¿®æ”¹è¿™ä¸ªå€¼ã€‚å½“é…é¢å°äºç­‰äº0æ—¶ï¼Œç»“æŸè½®è¯¢
+	int			weight;	// æ•°æ®åŒ…è¾“å…¥è½¯ä¸­æ–­ä¸­ï¼Œå•ä¸ªç½‘ç»œè®¾å¤‡è¯»å–æ•°æ®åŒ…çš„é…é¢
+	unsigned long		last_rx;	/* Time of last Rx	*/	// æœ€åä¸€æ¬¡æ”¶åˆ°æ•°æ®åŒ…çš„æ—¶é—´
 	/* Interface address info used in eth_type_trans() */
-	unsigned char		dev_addr[MAX_ADDR_LEN];	/* hw address, (before bcast 
+	unsigned char		dev_addr[MAX_ADDR_LEN];	/* hw address, (before bcast
 							because most packets are unicast) */
 
 	unsigned char		broadcast[MAX_ADDR_LEN];	/* hw bcast add	*/
@@ -419,47 +419,47 @@ struct net_device
  * Cache line mostly used on queue transmit path (qdisc)
  */
 	/* device queue lock */
-	spinlock_t		queue_lock ____cacheline_aligned_in_smp;	// ¶ÓÁĞ²Ù×÷Ëø£¬·ÀÖ¹¶àCPU²Ù×÷
-	struct Qdisc		*qdisc;			// µ±Ç°Ê¹ÓÃµÄ¸ùÅÅ¶Ó¹æÔò		
-	struct Qdisc		*qdisc_sleeping;	// µ±Ç°ÅäÖÃµÄÅÅ¶Ó¹æÔò£¬ÉúĞ§Ê±½«±»ÉèÖÃµ½qdisc
-	struct list_head	qdisc_list;			// ÅäÖÃÔÚÍøÂçµÄËùÓĞÅÅ¶Ó¹æÔò
-	unsigned long		tx_queue_len;	/* Max frames per queue allowed */	// ÔÚÉè±¸·¢ËÍ¶ÓÁĞÖĞÅÅ¶ÓµÄ×î´óÊı¾İ°ü
+	spinlock_t		queue_lock ____cacheline_aligned_in_smp;	// é˜Ÿåˆ—æ“ä½œé”ï¼Œé˜²æ­¢å¤šCPUæ“ä½œ
+	struct Qdisc		*qdisc;			// å½“å‰ä½¿ç”¨çš„æ ¹æ’é˜Ÿè§„åˆ™
+	struct Qdisc		*qdisc_sleeping;	// å½“å‰é…ç½®çš„æ’é˜Ÿè§„åˆ™ï¼Œç”Ÿæ•ˆæ—¶å°†è¢«è®¾ç½®åˆ°qdisc
+	struct list_head	qdisc_list;			// é…ç½®åœ¨ç½‘ç»œçš„æ‰€æœ‰æ’é˜Ÿè§„åˆ™
+	unsigned long		tx_queue_len;	/* Max frames per queue allowed */	// åœ¨è®¾å¤‡å‘é€é˜Ÿåˆ—ä¸­æ’é˜Ÿçš„æœ€å¤§æ•°æ®åŒ…
 
 	/* Partially transmitted GSO packet. */
-	struct sk_buff		*gso_skb;	// ¾­Èí·Ö¸îµÄGSOÊı¾İ°ü
+	struct sk_buff		*gso_skb;	// ç»è½¯åˆ†å‰²çš„GSOæ•°æ®åŒ…
 
 	/* ingress path synchronizer */
-	spinlock_t		ingress_lock;	// ÊäÈëÅÅ¶Ó¹æÔòµÄËø
-	struct Qdisc		*qdisc_ingress;	// Êı¾İ°üÊäÈëµÄÅÅ¶Ó¹æÔò
+	spinlock_t		ingress_lock;	// è¾“å…¥æ’é˜Ÿè§„åˆ™çš„é”
+	struct Qdisc		*qdisc_ingress;	// æ•°æ®åŒ…è¾“å…¥çš„æ’é˜Ÿè§„åˆ™
 
 /*
  * One part is mostly used on xmit path (device)
  */
 	/* hard_start_xmit synchronizer */
-	spinlock_t		_xmit_lock ____cacheline_aligned_in_smp;		// Êı¾İ°ü·¢ËÍËø
+	spinlock_t		_xmit_lock ____cacheline_aligned_in_smp;		// æ•°æ®åŒ…å‘é€é”
 	/* cpu id of processor entered to hard_start_xmit or -1,
 	   if nobody entered there.
 	 */
-	int			xmit_lock_owner;// ÕıÔÚÍ¨¹ıÍøÂç·¢ËÍµÄCPU£¬-1 ±êÊ¶Ã»ÓĞ
-	void			*priv;	/* pointer to private data	*/	// Ë½ÓĞÊı¾İ£¬ÓÉalloc_netdev()ÉèÖÃ£¬×îºÃÍ¨¹ınetdev_priv½øĞĞ·ÃÎÊ
-	int			(*hard_start_xmit) (struct sk_buff *skb,	// Çı¶¯Ìá¹©¸øÉÏÒ»²ã·¢ËÍÊı¾İ°üµÄ½Ó¿Ú£¬ÔÚ·¢ËÍÊı¾İ°üÊ±ºò±Ø¶¨»áµ÷ÓÃ¸Ã½Ó¿Ú
+	int			xmit_lock_owner;// æ­£åœ¨é€šè¿‡ç½‘ç»œå‘é€çš„CPUï¼Œ-1 æ ‡è¯†æ²¡æœ‰
+	void			*priv;	/* pointer to private data	*/	// ç§æœ‰æ•°æ®ï¼Œç”±alloc_netdev()è®¾ç½®ï¼Œæœ€å¥½é€šè¿‡netdev_privè¿›è¡Œè®¿é—®
+	int			(*hard_start_xmit) (struct sk_buff *skb,	// é©±åŠ¨æä¾›ç»™ä¸Šä¸€å±‚å‘é€æ•°æ®åŒ…çš„æ¥å£ï¼Œåœ¨å‘é€æ•°æ®åŒ…æ—¶å€™å¿…å®šä¼šè°ƒç”¨è¯¥æ¥å£
 						    struct net_device *dev);
 	/* These may be needed for future network-power-down code. */
-	unsigned long		trans_start;	/* Time (in jiffies) of last Tx	×î½üÒ»´ÎÊä³öÊı¾İ°üµÄÊ±¼ä */
-	// ÍøÂç²ãÈ·¶¨´«ÊäÒÑ³¬Ê±£¬¶øµ÷ÓÃÇı¶¯³ÌĞòµÄtx_timeout½Ó¿ÚµÄ×î¶ÌÊ±¼ä
+	unsigned long		trans_start;	/* Time (in jiffies) of last Tx	æœ€è¿‘ä¸€æ¬¡è¾“å‡ºæ•°æ®åŒ…çš„æ—¶é—´ */
+	// ç½‘ç»œå±‚ç¡®å®šä¼ è¾“å·²è¶…æ—¶ï¼Œè€Œè°ƒç”¨é©±åŠ¨ç¨‹åºçš„tx_timeoutæ¥å£çš„æœ€çŸ­æ—¶é—´
 	int			watchdog_timeo; /* used by dev_watchdog() */
-	struct timer_list	watchdog_timer;	// ¼ì²âÍøÂçÉè±¸Õı³£×´Ì¬µÄÈí¼ş¹·
+	struct timer_list	watchdog_timer;	// æ£€æµ‹ç½‘ç»œè®¾å¤‡æ­£å¸¸çŠ¶æ€çš„è½¯ä»¶ç‹—
 
 /*
  * refcnt is a very hot point, so align it on SMP
  */
 	/* Number of references to this device */
-	atomic_t		refcnt ____cacheline_aligned_in_smp;	// ÍøÂçÉè±¸µÄÒıÓÃ¼ÆÊı
-	// ÓÃÀ´Á¬½Óµ½net_todo_list
+	atomic_t		refcnt ____cacheline_aligned_in_smp;	// ç½‘ç»œè®¾å¤‡çš„å¼•ç”¨è®¡æ•°
+	// ç”¨æ¥è¿æ¥åˆ°net_todo_list
 	/* delayed register/unregister */
 	struct list_head	todo_list;
 	/* device index hash chain */
-	struct hlist_node	index_hlist;	// ¸ù¾İÍøÂçÉè±¸Ë÷Òı£¬ÒÑÉ¢ÁĞ±íµÄĞÎÊ½×éÖ¯µ½dev_index_headÉ¢ÁĞ±íÖĞ¡£
+	struct hlist_node	index_hlist;	// æ ¹æ®ç½‘ç»œè®¾å¤‡ç´¢å¼•ï¼Œå·²æ•£åˆ—è¡¨çš„å½¢å¼ç»„ç»‡åˆ°dev_index_headæ•£åˆ—è¡¨ä¸­ã€‚
 
 	/* register/unregister state machine */
 	enum { NETREG_UNINITIALIZED=0,
@@ -467,46 +467,46 @@ struct net_device
 	       NETREG_UNREGISTERING,	/* called unregister_netdevice */
 	       NETREG_UNREGISTERED,	/* completed unregister todo */
 	       NETREG_RELEASED,		/* called free_netdev */
-	} reg_state;	// ÍøÂçÉè±¸×¢²áµ½Á´±íÖĞ£¬ÓÃÓÚ±êÊ¶ÍøÂçÉè±¸µÄ×¢²á×´Ì¬
+	} reg_state;	// ç½‘ç»œè®¾å¤‡æ³¨å†Œåˆ°é“¾è¡¨ä¸­ï¼Œç”¨äºæ ‡è¯†ç½‘ç»œè®¾å¤‡çš„æ³¨å†ŒçŠ¶æ€
 
 	/* Called after device is detached from network. */
-	void			(*uninit)(struct net_device *dev);	// Çı¶¯Ïú»Ùº¯ÊıÖ¸Õë¡£unregister_netdevice() ½«µ÷ÓÃ¸Ãº¯Êı£¬Óëinit¶ÔÓ¦
+	void			(*uninit)(struct net_device *dev);	// é©±åŠ¨é”€æ¯å‡½æ•°æŒ‡é’ˆã€‚unregister_netdevice() å°†è°ƒç”¨è¯¥å‡½æ•°ï¼Œä¸initå¯¹åº”
 	/* Called after last user reference disappears. */
 	void			(*destructor)(struct net_device *dev);
-	// destructorÒ»°ã²»»á±»³õÊ¼»¯£¬ÉÙÊıĞéÄâÉè±¸Ê¹ÓÃ£¬Í¨³£±»³õÊ¼»¯Îªfree_netdev()¡£¾ø´ó¶àÊıÉè±¸Çı¶¯ÔÚunregister_netdev()Ö®ºóÖ±½Óµ÷ÓÃfree_netdev()
+	// destructorä¸€èˆ¬ä¸ä¼šè¢«åˆå§‹åŒ–ï¼Œå°‘æ•°è™šæ‹Ÿè®¾å¤‡ä½¿ç”¨ï¼Œé€šå¸¸è¢«åˆå§‹åŒ–ä¸ºfree_netdev()ã€‚ç»å¤§å¤šæ•°è®¾å¤‡é©±åŠ¨åœ¨unregister_netdev()ä¹‹åç›´æ¥è°ƒç”¨free_netdev()
 	/* Pointers to interface service routines.	*/
-	int			(*open)(struct net_device *dev);	// Æô¶¯Éè±¸º¯ÊıÖ¸Õë   ifconfig up
-	int			(*stop)(struct net_device *dev);	// ¹Ø±ÕÉè±¸º¯ÊıÖ¸Õë	ifconfig down
+	int			(*open)(struct net_device *dev);	// å¯åŠ¨è®¾å¤‡å‡½æ•°æŒ‡é’ˆ   ifconfig up
+	int			(*stop)(struct net_device *dev);	// å…³é—­è®¾å¤‡å‡½æ•°æŒ‡é’ˆ	ifconfig down
 #define HAVE_NETDEV_POLL
-	int			(*hard_header) (struct sk_buff *skb,	// ¸ù¾İÖ®Ç°¼ìË÷µ½µÄÔ´ºÍÄ¿µÄÓ²¼şµØÖ·´´½¨Ó²¼şÊ×²¿
-						struct net_device *dev,			// ÒÔÌ«ÍøÉè±¸¶ÔÓ¦µÄ½Ó¿ÚÎªeth_header()
+	int			(*hard_header) (struct sk_buff *skb,	// æ ¹æ®ä¹‹å‰æ£€ç´¢åˆ°çš„æºå’Œç›®çš„ç¡¬ä»¶åœ°å€åˆ›å»ºç¡¬ä»¶é¦–éƒ¨
+						struct net_device *dev,			// ä»¥å¤ªç½‘è®¾å¤‡å¯¹åº”çš„æ¥å£ä¸ºeth_header()
 						unsigned short type,
 						void *daddr,
 						void *saddr,
 						unsigned len);
-	int			(*rebuild_header)(struct sk_buff *skb);	// ÖØ½¨Ó²¼şÊ×²¿
-#define HAVE_MULTICAST			 
-	void			(*set_multicast_list)(struct net_device *dev);	// ½«×é²¥µØÖ·±í¸üĞÂµ½ÍøÂçÉè±¸ÖĞ
-#define HAVE_SET_MAC_ADDR  		 
-	int			(*set_mac_address)(struct net_device *dev,	// ¸ü¸ÄÓ²¼şµØÖ·½Ó¿Ú£¬ĞèÒªÍøÂçÉè±¸Ö§³Ö
+	int			(*rebuild_header)(struct sk_buff *skb);	// é‡å»ºç¡¬ä»¶é¦–éƒ¨
+#define HAVE_MULTICAST
+	void			(*set_multicast_list)(struct net_device *dev);	// å°†ç»„æ’­åœ°å€è¡¨æ›´æ–°åˆ°ç½‘ç»œè®¾å¤‡ä¸­
+#define HAVE_SET_MAC_ADDR
+	int			(*set_mac_address)(struct net_device *dev,	// æ›´æ”¹ç¡¬ä»¶åœ°å€æ¥å£ï¼Œéœ€è¦ç½‘ç»œè®¾å¤‡æ”¯æŒ
 						   void *addr);
 #define HAVE_PRIVATE_IOCTL
-	int			(*do_ioctl)(struct net_device *dev,			// ioctl¹¦ÄÜ½Ó¿Ú£¬Èç¹ûÉè±¸²»Ìá¹©¸Ã¹¦ÄÜNULL
+	int			(*do_ioctl)(struct net_device *dev,			// ioctlåŠŸèƒ½æ¥å£ï¼Œå¦‚æœè®¾å¤‡ä¸æä¾›è¯¥åŠŸèƒ½NULL
 					    struct ifreq *ifr, int cmd);
 #define HAVE_SET_CONFIG
-	int			(*set_config)(struct net_device *dev,		// ĞŞ¸ÄÉè±¸½Ó¿ÚÅäÖÃ½Ó¿Ú£¬ÏÖÔÚ²»³£ÓÃ
+	int			(*set_config)(struct net_device *dev,		// ä¿®æ”¹è®¾å¤‡æ¥å£é…ç½®æ¥å£ï¼Œç°åœ¨ä¸å¸¸ç”¨
 					      struct ifmap *map);
 #define HAVE_HEADER_CACHE
-	int			(*hard_header_cache)(struct neighbour *neigh,	// ¸ù¾İARP²éÑ¯½á¹ûÌî³ähh_cache½á¹¹£¬Í¨³£Çı¶¯³ÌĞòÊ¹ÓÃÄ¬ÈÏµÄeth_header_cache()ÊµÏÖ
+	int			(*hard_header_cache)(struct neighbour *neigh,	// æ ¹æ®ARPæŸ¥è¯¢ç»“æœå¡«å……hh_cacheç»“æ„ï¼Œé€šå¸¸é©±åŠ¨ç¨‹åºä½¿ç”¨é»˜è®¤çš„eth_header_cache()å®ç°
 						     struct hh_cache *hh);
-	void			(*header_cache_update)(struct hh_cache *hh,	// ¸üĞÂhh_cache½á¹¹ÖĞµÄÄ¿µÄµØÖ·¡£ÒÔÌ«ÍøÉè±¸Ê¹ÓÃeth_header_cache_update()
+	void			(*header_cache_update)(struct hh_cache *hh,	// æ›´æ–°hh_cacheç»“æ„ä¸­çš„ç›®çš„åœ°å€ã€‚ä»¥å¤ªç½‘è®¾å¤‡ä½¿ç”¨eth_header_cache_update()
 						       struct net_device *dev,
 						       unsigned char *  haddr);
 #define HAVE_CHANGE_MTU
-	int			(*change_mtu)(struct net_device *dev, int new_mtu);	// Èç¹ûÇı¶¯³ÌĞòÔÚĞŞ¸ÄMTUºóĞèÒªÍê³ÉÄ³Ğ©ÌØ¶¨¹¤×÷£¬ÔòÓ¦¸ÃÊµÏÖ´Ëº¯Êı
+	int			(*change_mtu)(struct net_device *dev, int new_mtu);	// å¦‚æœé©±åŠ¨ç¨‹åºåœ¨ä¿®æ”¹MTUåéœ€è¦å®ŒæˆæŸäº›ç‰¹å®šå·¥ä½œï¼Œåˆ™åº”è¯¥å®ç°æ­¤å‡½æ•°
 
 #define HAVE_TX_TIMEOUT
-	void			(*tx_timeout) (struct net_device *dev);	// Êı¾İ°ü·¢ËÍ³¬Ê±´¦Àíº¯Êı
+	void			(*tx_timeout) (struct net_device *dev);	// æ•°æ®åŒ…å‘é€è¶…æ—¶å¤„ç†å‡½æ•°
 
 	void			(*vlan_rx_register)(struct net_device *dev,
 						    struct vlan_group *grp);
@@ -515,21 +515,21 @@ struct net_device
 	void			(*vlan_rx_kill_vid)(struct net_device *dev,
 						    unsigned short vid);
 
-	int			(*hard_header_parse)(struct sk_buff *skb,	// ´Óskb°üÖĞ½âÎö³öÔ´Ó²¼şµØÖ·£¬ÒÔÌ«ÍøÉè±¸Ê¹ÓÃeth_header_parse()
+	int			(*hard_header_parse)(struct sk_buff *skb,	// ä»skbåŒ…ä¸­è§£æå‡ºæºç¡¬ä»¶åœ°å€ï¼Œä»¥å¤ªç½‘è®¾å¤‡ä½¿ç”¨eth_header_parse()
 						     unsigned char *haddr);
-	int			(*neigh_setup)(struct net_device *dev, struct neigh_parms *);	// ÓÃÓÚÉèÖÃÓëÁÚ¾Ó×ÓÏµÍ³Ïà¹ØµÄ²ÎÊı
+	int			(*neigh_setup)(struct net_device *dev, struct neigh_parms *);	// ç”¨äºè®¾ç½®ä¸é‚»å±…å­ç³»ç»Ÿç›¸å…³çš„å‚æ•°
 #ifdef CONFIG_NETPOLL
-	struct netpoll_info	*npinfo;			// ÍøÂçÉè±¸µÄnetpollĞÅÏ¢¿é£¬´æ´¢ÓÚnetpoll_infoÏà¹ØµÄĞÅÏ¢£¬ÓĞnetpoll_setup()ÉèÖÃ
+	struct netpoll_info	*npinfo;			// ç½‘ç»œè®¾å¤‡çš„netpollä¿¡æ¯å—ï¼Œå­˜å‚¨äºnetpoll_infoç›¸å…³çš„ä¿¡æ¯ï¼Œæœ‰netpoll_setup()è®¾ç½®
 #endif
-#ifdef CONFIG_NET_POLL_CONTROLLER			// ÔÚ½ûÖ¹ÖĞ¶ÏµÄÇé¿öÏÂ£¬ÒªÇóÇı¶¯³ÌĞòÒÔÂÖÑ¯µÄ·½Ê½ÔÚ½Ó¿ÚÉÏ²éÑ¯ÊÂ¼ş
+#ifdef CONFIG_NET_POLL_CONTROLLER			// åœ¨ç¦æ­¢ä¸­æ–­çš„æƒ…å†µä¸‹ï¼Œè¦æ±‚é©±åŠ¨ç¨‹åºä»¥è½®è¯¢çš„æ–¹å¼åœ¨æ¥å£ä¸ŠæŸ¥è¯¢äº‹ä»¶
 	void                    (*poll_controller)(struct net_device *dev);
 #endif
 
 	/* bridge stuff */
-	struct net_bridge_port	*br_port;		// ÔÚ´´½¨Ò»¸öÍøÇÅÉè±¸Ê±£¬Ö¸Ïònet_bridge_portÊµÀı
+	struct net_bridge_port	*br_port;		// åœ¨åˆ›å»ºä¸€ä¸ªç½‘æ¡¥è®¾å¤‡æ—¶ï¼ŒæŒ‡å‘net_bridge_portå®ä¾‹
 
 	/* class/net/name entry */
-	struct class_device	class_dev;			// ÍøÂçÉè±¸×¢²áÔÚ/sys/class/netÖĞµÄÊµÀı
+	struct class_device	class_dev;			// ç½‘ç»œè®¾å¤‡æ³¨å†Œåœ¨/sys/class/netä¸­çš„å®ä¾‹
 	/* space for optional statistics and wireless sysfs groups */
 	struct attribute_group  *sysfs_groups[3];
 };
@@ -551,16 +551,16 @@ static inline void *netdev_priv(struct net_device *dev)
 #define SET_NETDEV_DEV(net, pdev)	((net)->class_dev.dev = (pdev))
 
 struct packet_type {
-	__be16			type;	/* This is really htons(ether_type). ÍøÂç²ã±¨ÎÄĞ­ÒéºÅ*/
-	struct net_device	*dev;	/* NULL is wildcarded here	     */ // ½ÓÊÕÖ¸¶¨ÍøÂçÉè±¸ÊäÈëµÄÊı¾İ°ü
-	int			(*func) (struct sk_buff *,	// Ğ­ÒéÈë¿Ú½ÓÊÕ´¦Àíº¯Êı ¡£ ÊäÈë±¨ÎÄ
-					 struct net_device *,	// µ±Ç°´¦Àí±¨ÎÄµÄÍøÂçÉè±¸
-					 struct packet_type *,	// ±¨ÎÄÀàĞÍ
-					 struct net_device *);	// ±¨ÎÄÔ­Ê¼ÊäÈëÍøÂçÉè±¸
-	struct sk_buff		*(*gso_segment)(struct sk_buff *skb,		// GSOÊÇÍøÂçÉè±¸Ö§³Ö´«Êä²ãµÄÒ»¸ö¹¦ÄÜ¡£µ±GSOÊı¾İ°üÊä³öµ½´ïÍøÂçÉè±¸Å¶£¬Èç¹ûÍøÂçÉè±¸²»Ö§³ÖGSO£¬ÔòĞèÒªµ÷ÓÃ´«Êä²ãµÄ´¦Àíº¯Êı¶ÔÊä³ö±¨ÎÄ½øĞĞGSO·Ö¶Î
-						int features);			// gso_segment »Øµ÷´«Êä²ãGSO·Ö¶Î·½·¨¶Ô´ó¶Î½øĞĞ·Ö¶Î
-	int			(*gso_send_check)(struct sk_buff *skb);	// »Øµ÷´«Êä²ãÔÚ·Ö¶ÎÖ®Ç°¶ÔÎ±Ê×²¿½øĞĞĞ£ÑéºÍ¼ÆËã
-	void			*af_packet_priv;		// Ğ­Òé×åµÄË½ÓĞÊı¾İ
+	__be16			type;	/* This is really htons(ether_type). ç½‘ç»œå±‚æŠ¥æ–‡åè®®å·*/
+	struct net_device	*dev;	/* NULL is wildcarded here	     */ // æ¥æ”¶æŒ‡å®šç½‘ç»œè®¾å¤‡è¾“å…¥çš„æ•°æ®åŒ…
+	int			(*func) (struct sk_buff *,	// åè®®å…¥å£æ¥æ”¶å¤„ç†å‡½æ•° ã€‚ è¾“å…¥æŠ¥æ–‡
+					 struct net_device *,	// å½“å‰å¤„ç†æŠ¥æ–‡çš„ç½‘ç»œè®¾å¤‡
+					 struct packet_type *,	// æŠ¥æ–‡ç±»å‹
+					 struct net_device *);	// æŠ¥æ–‡åŸå§‹è¾“å…¥ç½‘ç»œè®¾å¤‡
+	struct sk_buff		*(*gso_segment)(struct sk_buff *skb,		// GSOæ˜¯ç½‘ç»œè®¾å¤‡æ”¯æŒä¼ è¾“å±‚çš„ä¸€ä¸ªåŠŸèƒ½ã€‚å½“GSOæ•°æ®åŒ…è¾“å‡ºåˆ°è¾¾ç½‘ç»œè®¾å¤‡å“¦ï¼Œå¦‚æœç½‘ç»œè®¾å¤‡ä¸æ”¯æŒGSOï¼Œåˆ™éœ€è¦è°ƒç”¨ä¼ è¾“å±‚çš„å¤„ç†å‡½æ•°å¯¹è¾“å‡ºæŠ¥æ–‡è¿›è¡ŒGSOåˆ†æ®µ
+						int features);			// gso_segment å›è°ƒä¼ è¾“å±‚GSOåˆ†æ®µæ–¹æ³•å¯¹å¤§æ®µè¿›è¡Œåˆ†æ®µ
+	int			(*gso_send_check)(struct sk_buff *skb);	// å›è°ƒä¼ è¾“å±‚åœ¨åˆ†æ®µä¹‹å‰å¯¹ä¼ªé¦–éƒ¨è¿›è¡Œæ ¡éªŒå’Œè®¡ç®—
+	void			*af_packet_priv;		// åè®®æ—çš„ç§æœ‰æ•°æ®
 	struct list_head	list;
 };
 
@@ -615,11 +615,11 @@ static inline int unregister_gifconf(unsigned int family)
 
 struct softnet_data
 {
-	struct net_device	*output_queue;			// Êı¾İ°üÊä³öÈíÖĞ¶ÏÖĞ£¬Êä³öÊı¾İ°üµÄÍøÂçÉè±¸¶ÓÁĞ
-	struct sk_buff_head	input_pkt_queue;		// ·ÇNAPIµÄ½Ó¿Ú²ã»º´æ¶ÓÁĞ
-	struct list_head	poll_list;				// ÍøÂçÉè±¸ÂÖÑ¯¶ÓÁĞ¡£´¦ÓÚ±¨ÎÄ½ÓÊÕ×´Ì¬µÄÍøÂçÉè±¸Á´½Óµ½¸Ã¶ÓÁĞÉÏ£¬ÔÚÊı¾İ°üÊäÈëÈíÖĞ¶ÏÖĞ£¬»á±éÀú¸Ã¶ÓÁĞ¡£
-	struct sk_buff		*completion_queue;		// Íê³ÉÊı¾İ°ü·¢ËÍµÄµÈ´ıÊÍ·Å¶ÓÁĞ£¬ĞèÒªÔÙÊÊµ±µÄÊ±»úÊÍ·ÅÒÑ·¢ËÍÍê³ÉµÄÊı¾İ°ü
-	// ÓÃÓÚ·ÇNAPIÇı¶¯µÄĞéÄâÍøÂçÉè±¸£¬²»´ú±í¾ßÌåµÄÍøÂçÉè±¸
+	struct net_device	*output_queue;			// æ•°æ®åŒ…è¾“å‡ºè½¯ä¸­æ–­ä¸­ï¼Œè¾“å‡ºæ•°æ®åŒ…çš„ç½‘ç»œè®¾å¤‡é˜Ÿåˆ—
+	struct sk_buff_head	input_pkt_queue;		// éNAPIçš„æ¥å£å±‚ç¼“å­˜é˜Ÿåˆ—
+	struct list_head	poll_list;				// ç½‘ç»œè®¾å¤‡è½®è¯¢é˜Ÿåˆ—ã€‚å¤„äºæŠ¥æ–‡æ¥æ”¶çŠ¶æ€çš„ç½‘ç»œè®¾å¤‡é“¾æ¥åˆ°è¯¥é˜Ÿåˆ—ä¸Šï¼Œåœ¨æ•°æ®åŒ…è¾“å…¥è½¯ä¸­æ–­ä¸­ï¼Œä¼šéå†è¯¥é˜Ÿåˆ—ã€‚
+	struct sk_buff		*completion_queue;		// å®Œæˆæ•°æ®åŒ…å‘é€çš„ç­‰å¾…é‡Šæ”¾é˜Ÿåˆ—ï¼Œéœ€è¦å†é€‚å½“çš„æ—¶æœºé‡Šæ”¾å·²å‘é€å®Œæˆçš„æ•°æ®åŒ…
+	// ç”¨äºéNAPIé©±åŠ¨çš„è™šæ‹Ÿç½‘ç»œè®¾å¤‡ï¼Œä¸ä»£è¡¨å…·ä½“çš„ç½‘ç»œè®¾å¤‡
 	struct net_device	backlog_dev;	/* Sorry. 8) */
 #ifdef CONFIG_NET_DMA
 	struct dma_chan		*net_dma;
@@ -631,7 +631,7 @@ DECLARE_PER_CPU(struct softnet_data,softnet_data);
 #define HAVE_NETIF_QUEUE
 
 extern void __netif_schedule(struct net_device *dev);
-// ¼¤»îÊı¾İ°üÊä³öÈíÖĞ¶Ï
+// æ¿€æ´»æ•°æ®åŒ…è¾“å‡ºè½¯ä¸­æ–­
 static inline void netif_schedule(struct net_device *dev)
 {
 	if (!test_bit(__LINK_STATE_XOFF, &dev->state))
