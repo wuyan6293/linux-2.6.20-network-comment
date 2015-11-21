@@ -48,7 +48,7 @@ flags = [
     # '-DKBUILD_MODNAME=KBUILD_STR(3c574_cs)',
     # '-DKBUILD_STR(s)=#s',
     '-DLOCALE',
-    '-DMODULE',
+    # '-DMODULE',
     '-DSAS_DEBUG',
     '-DSVGA_MODE=NORMAL_VGA',
     # '-D__ASSEMBLY__',
