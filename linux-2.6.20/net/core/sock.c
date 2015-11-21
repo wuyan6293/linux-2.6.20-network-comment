@@ -34,7 +34,7 @@
  *		Alan Cox	:	TCP ack handling is buggy, the DESTROY timer
  *					was buggy. Put a remove_sock() in the handler
  *					for memory when we hit 0. Also altered the timer
- *					code. The ACK stuff can wait and needs major 
+ *					code. The ACK stuff can wait and needs major
  *					TCP layer surgery.
  *		Alan Cox	:	Fixed TCP ack bug, removed remove sock
  *					and fixed timer/inet_bh race.
@@ -217,8 +217,8 @@ static void sock_warn_obsolete_bsdism(const char *name)
 {
 	static int warned;
 	static char warncomm[TASK_COMM_LEN];
-	if (strcmp(warncomm, current->comm) && warned < 5) { 
-		strcpy(warncomm,  current->comm); 
+	if (strcmp(warncomm, current->comm) && warned < 5) {
+		strcpy(warncomm,  current->comm);
 		printk(KERN_WARNING "process `%s' is using obsolete "
 		       "%s SO_BSDCOMPAT\n", warncomm, name);
 		warned++;
@@ -226,8 +226,8 @@ static void sock_warn_obsolete_bsdism(const char *name)
 }
 
 static void sock_disable_timestamp(struct sock *sk)
-{	
-	if (sock_flag(sk, SOCK_TIMESTAMP)) { 
+{
+	if (sock_flag(sk, SOCK_TIMESTAMP)) {
 		sock_reset_flag(sk, SOCK_TIMESTAMP);
 		net_disable_timestamp();
 	}
@@ -347,34 +347,34 @@ int sock_setsockopt(struct socket *sock, int level, int optname,
 	int valbool;
 	struct linger ling;
 	int ret = 0;
-	
+
 	/*
 	 *	Options without arguments
 	 */
 
 #ifdef SO_DONTLINGER		/* Compatibility item... */
-	if (optname == SO_DONTLINGER) {			// ¸ÃÑ¡ÏîÓÃÀ´½ûÖ¹SO_LINGER
+	if (optname == SO_DONTLINGER) {			// è¯¥é€‰é¡¹ç”¨æ¥ç¦æ­¢SO_LINGER
 		lock_sock(sk);
-		sock_reset_flag(sk, SOCK_LINGER);	// ½«´«Êä¿ØÖÆ¿éµÄsk_flags³ÉÔ±µÄSOCK_LINGERÎ»ÖÃ0
+		sock_reset_flag(sk, SOCK_LINGER);	// å°†ä¼ è¾“æ§åˆ¶å—çš„sk_flagsæˆå‘˜çš„SOCK_LINGERä½ç½®0
 		release_sock(sk);
 		return 0;
 	}
 #endif
-	
+
   	if(optlen<sizeof(int))
   		return(-EINVAL);
-  	
+
 	if (get_user(val, (int __user *)optval))
 		return -EFAULT;
-	
+
   	valbool = val?1:0;
 
 	lock_sock(sk);
 
-  	switch(optname) 
+  	switch(optname)
   	{
-		case SO_DEBUG:	// µ÷ÊÔÑ¡Ïî£¬¿ªÆôºóÏòÆÁÄ»Êä³öµ÷ÊÔĞÅÏ¢	
-			if(val && !capable(CAP_NET_ADMIN))		// ĞèÒªCAP_NET_ADMINÈ¨ÏŞ
+		case SO_DEBUG:	// è°ƒè¯•é€‰é¡¹ï¼Œå¼€å¯åå‘å±å¹•è¾“å‡ºè°ƒè¯•ä¿¡æ¯
+			if(val && !capable(CAP_NET_ADMIN))		// éœ€è¦CAP_NET_ADMINæƒé™
 			{
 				ret = -EACCES;
 			}
@@ -404,7 +404,7 @@ int sock_setsockopt(struct socket *sock, int level, int optname,
 			   about it this is right. Otherwise apps have to
 			   play 'guess the biggest size' games. RCVBUF/SNDBUF
 			   are treated in BSD as hints */
-			   
+
 			if (val > sysctl_wmem_max)
 				val = sysctl_wmem_max;
 set_sndbuf:
@@ -433,7 +433,7 @@ set_sndbuf:
 			   about it this is right. Otherwise apps have to
 			   play 'guess the biggest size' games. RCVBUF/SNDBUF
 			   are treated in BSD as hints */
-			  
+
 			if (val > sysctl_rmem_max)
 				val = sysctl_rmem_max;
 set_rcvbuf:
@@ -474,22 +474,22 @@ set_rcvbuf:
 			sock_valbool_flag(sk, SOCK_KEEPOPEN, valbool);
 			break;
 
-	 	case SO_OOBINLINE:	// ´øÍâÊı¾İ
+	 	case SO_OOBINLINE:	// å¸¦å¤–æ•°æ®
 			sock_valbool_flag(sk, SOCK_URGINLINE, valbool);
 			break;
 
-	 	case SO_NO_CHECK:	// ¾ö¶¨RAWºÍUDPÊÇ·ñ½øĞĞĞ£ÑéºÍ
+	 	case SO_NO_CHECK:	// å†³å®šRAWå’ŒUDPæ˜¯å¦è¿›è¡Œæ ¡éªŒå’Œ
 			sk->sk_no_check = valbool;
 			break;
 
-		case SO_PRIORITY:	// ÉèÖÃ·¢ËÍ»ò×ª·¢°üµÄQOSÀà±ğ
-			if ((val >= 0 && val <= 6) || capable(CAP_NET_ADMIN)) 
+		case SO_PRIORITY:	// è®¾ç½®å‘é€æˆ–è½¬å‘åŒ…çš„QOSç±»åˆ«
+			if ((val >= 0 && val <= 6) || capable(CAP_NET_ADMIN))
 				sk->sk_priority = val;
 			else
 				ret = -EPERM;
 			break;
 
-		case SO_LINGER:		// ÉèÖÃ¹Ø±ÕÌ×½Ó¿ÚµÄÑÓÊ±Ê±¼äÖµ
+		case SO_LINGER:		// è®¾ç½®å…³é—­å¥—æ¥å£çš„å»¶æ—¶æ—¶é—´å€¼
 			if(optlen<sizeof(ling)) {
 				ret = -EINVAL;	/* 1003.1g */
 				break;
@@ -547,9 +547,9 @@ set_rcvbuf:
 #ifdef CONFIG_NETDEVICES
 		case SO_BINDTODEVICE:
 		{
-			char devname[IFNAMSIZ]; 
+			char devname[IFNAMSIZ];
 
-			/* Sorry... */ 
+			/* Sorry... */
 			if (!capable(CAP_NET_RAW)) {
 				ret = -EPERM;
 				break;
@@ -557,9 +557,9 @@ set_rcvbuf:
 
 			/* Bind this socket to a particular device like "eth0",
 			 * as specified in the passed interface name. If the
-			 * name is "" or the option length is zero the socket 
-			 * is not bound. 
-			 */ 
+			 * name is "" or the option length is zero the socket
+			 * is not bound.
+			 */
 
 			if (!valbool) {
 				sk->sk_bound_dev_if = 0;
@@ -640,32 +640,32 @@ int sock_getsockopt(struct socket *sock, int level, int optname,
 		    char __user *optval, int __user *optlen)
 {
 	struct sock *sk = sock->sk;
-	
+
 	union
 	{
   		int val;
   		struct linger ling;
 		struct timeval tm;
 	} v;
-	
+
 	unsigned int lv = sizeof(int);
 	int len;
-  	
+
   	if(get_user(len,optlen))
   		return -EFAULT;
 	if(len < 0)
 		return -EINVAL;
-		
-  	switch(optname) 
+
+  	switch(optname)
   	{
-		case SO_DEBUG:		
+		case SO_DEBUG:
 			v.val = sock_flag(sk, SOCK_DBG);
 			break;
-		
+
 		case SO_DONTROUTE:
 			v.val = sock_flag(sk, SOCK_LOCALROUTE);
 			break;
-		
+
 		case SO_BROADCAST:
 			v.val = !!sock_flag(sk, SOCK_BROADCAST);
 			break;
@@ -673,7 +673,7 @@ int sock_getsockopt(struct socket *sock, int level, int optname,
 		case SO_SNDBUF:
 			v.val = sk->sk_sndbuf;
 			break;
-		
+
 		case SO_RCVBUF:
 			v.val = sk->sk_rcvbuf;
 			break;
@@ -687,7 +687,7 @@ int sock_getsockopt(struct socket *sock, int level, int optname,
 			break;
 
 		case SO_TYPE:
-			v.val = sk->sk_type;		  		
+			v.val = sk->sk_type;
 			break;
 
 		case SO_ERROR:
@@ -699,7 +699,7 @@ int sock_getsockopt(struct socket *sock, int level, int optname,
 		case SO_OOBINLINE:
 			v.val = !!sock_flag(sk, SOCK_URGINLINE);
 			break;
-	
+
 		case SO_NO_CHECK:
 			v.val = sk->sk_no_check;
 			break;
@@ -707,13 +707,13 @@ int sock_getsockopt(struct socket *sock, int level, int optname,
 		case SO_PRIORITY:
 			v.val = sk->sk_priority;
 			break;
-		
-		case SO_LINGER:	
+
+		case SO_LINGER:
 			lv		= sizeof(v.ling);
 			v.ling.l_onoff	= !!sock_flag(sk, SOCK_LINGER);
  			v.ling.l_linger	= sk->sk_lingertime / HZ;
 			break;
-					
+
 		case SO_BSDCOMPAT:
 			sock_warn_obsolete_bsdism("getsockopt");
 			break;
@@ -750,7 +750,7 @@ int sock_getsockopt(struct socket *sock, int level, int optname,
 
 		case SO_SNDLOWAT:
 			v.val=1;
-			break; 
+			break;
 
 		case SO_PASSCRED:
 			v.val = test_bit(SOCK_PASSCRED, &sock->flags) ? 1 : 0;
@@ -823,21 +823,21 @@ static void inline sock_lock_init(struct sock *sk)
  *	@priority: for allocation (%GFP_KERNEL, %GFP_ATOMIC, etc)
  *	@prot: struct proto associated with this new sock instance
  *	@zero_it: if we should zero the newly allocated sock
- */	// ·ÖÅä´«Êä¿ØÖÆ¿é
+ */	// åˆ†é…ä¼ è¾“æ§åˆ¶å—
 struct sock *sk_alloc(int family, gfp_t priority,
 		      struct proto *prot, int zero_it)
 {
 	struct sock *sk = NULL;
 	struct kmem_cache *slab = prot->slab;
-	// ¸ù¾İ·ÖÅä´«Êä¿ØÖÆ¿éµÄslab»º´æÊÇ·ñÓĞĞ§£¬´Óslab»º´æ»òÍ¨¹ıkmalloc·ÖÅä´«Êä¿ØÖÆ¿é
+	// æ ¹æ®åˆ†é…ä¼ è¾“æ§åˆ¶å—çš„slabç¼“å­˜æ˜¯å¦æœ‰æ•ˆï¼Œä»slabç¼“å­˜æˆ–é€šè¿‡kmallocåˆ†é…ä¼ è¾“æ§åˆ¶å—
 	if (slab != NULL)
 		sk = kmem_cache_alloc(slab, priority);
 	else
 		sk = kmalloc(prot->obj_size, priority);
 
 	if (sk) {
-		if (zero_it) {		// Èç¹ûĞèÒªÇåÁã
-			memset(sk, 0, prot->obj_size);		// ¶Ô³ÉÔ±½øĞĞ³õÊ¼»¯
+		if (zero_it) {		// å¦‚æœéœ€è¦æ¸…é›¶
+			memset(sk, 0, prot->obj_size);		// å¯¹æˆå‘˜è¿›è¡Œåˆå§‹åŒ–
 			sk->sk_family = family;
 			/*
 			 * See comment in struct sock definition to understand
@@ -846,10 +846,10 @@ struct sock *sk_alloc(int family, gfp_t priority,
 			sk->sk_prot = sk->sk_prot_creator = prot;
 			sock_lock_init(sk);
 		}
-		// °²È«Ä£¿éµÄÑéÖ¤
+		// å®‰å…¨æ¨¡å—çš„éªŒè¯
 		if (security_sk_alloc(sk, family, priority))
 			goto out_free;
-		// Ôö¼Ó¶Ôµ±Ç°ÏµĞ­ÒéËùÊôÄ£¿éµÄÒıÓÃ¼ÆÊı
+		// å¢åŠ å¯¹å½“å‰ç³»åè®®æ‰€å±æ¨¡å—çš„å¼•ç”¨è®¡æ•°
 		if (!try_module_get(prot->owner))
 			goto out_free;
 	}
@@ -862,44 +862,44 @@ out_free:
 		kfree(sk);
 	return NULL;
 }
-// ÊÍ·ÅÖ¸¶¨µÄ´«Êä¿ØÖÆ¿é¡£ÓĞsock_put()µ÷ÓÃ£¬µ±Ö¸¶¨µÄ´«Êä¿ØÖÆ¿éµÄÒıÓÃ¼ÆÊıÎª0Ê±£¬²Å»áµ÷ÓÃ¸Ãº¯Êı
+// é‡Šæ”¾æŒ‡å®šçš„ä¼ è¾“æ§åˆ¶å—ã€‚æœ‰sock_put()è°ƒç”¨ï¼Œå½“æŒ‡å®šçš„ä¼ è¾“æ§åˆ¶å—çš„å¼•ç”¨è®¡æ•°ä¸º0æ—¶ï¼Œæ‰ä¼šè°ƒç”¨è¯¥å‡½æ•°
 void sk_free(struct sock *sk)
 {
 	struct sk_filter *filter;
 	struct module *owner = sk->sk_prot_creator->owner;
-	// Èç¹ûÊµÏÖÁË´«Êä¿ØÖÆ¿éµÄÏú»Ùº¯Êı£¬Ôòµ÷ÓÃ¸Ãº¯Êı½øĞĞ×ÊÔ´»ØÊÕ£¬°üÀ¨ÊÍ·Å½ÓÊÕ¶ÓÁĞºÍ´íÎó¶ÓÁĞÖĞµÄSKB£¬ÊÍ·ÅIPÊı¾İ±¨Ñ¡Ïî¡¢Ä¿µÄÂ·ÓÉ»º´æÏî
+	// å¦‚æœå®ç°äº†ä¼ è¾“æ§åˆ¶å—çš„é”€æ¯å‡½æ•°ï¼Œåˆ™è°ƒç”¨è¯¥å‡½æ•°è¿›è¡Œèµ„æºå›æ”¶ï¼ŒåŒ…æ‹¬é‡Šæ”¾æ¥æ”¶é˜Ÿåˆ—å’Œé”™è¯¯é˜Ÿåˆ—ä¸­çš„SKBï¼Œé‡Šæ”¾IPæ•°æ®æŠ¥é€‰é¡¹ã€ç›®çš„è·¯ç”±ç¼“å­˜é¡¹
 	if (sk->sk_destruct)
 		sk->sk_destruct(sk);
-	// ÊÍ·ÅÒÑ¾­°²×°µÄÌ×½Ó¿Ú¹ıÂËÆ÷
+	// é‡Šæ”¾å·²ç»å®‰è£…çš„å¥—æ¥å£è¿‡æ»¤å™¨
 	filter = rcu_dereference(sk->sk_filter);
 	if (filter) {
 		sk_filter_release(sk, filter);
 		rcu_assign_pointer(sk->sk_filter, NULL);
 	}
-	// Èç¹ûÆôÓÃÁËÊı¾İ±¨½ÓÊÕÊ±¼ä×÷ÎªÊ±¼ä´Á£¬Ôò½«Æä¹Ø±Õ
+	// å¦‚æœå¯ç”¨äº†æ•°æ®æŠ¥æ¥æ”¶æ—¶é—´ä½œä¸ºæ—¶é—´æˆ³ï¼Œåˆ™å°†å…¶å…³é—­
 	sock_disable_timestamp(sk);
-	
+
 	if (atomic_read(&sk->sk_omem_alloc))
 		printk(KERN_DEBUG "%s: optmem leakage (%d bytes) detected.\n",
 		       __FUNCTION__, atomic_read(&sk->sk_omem_alloc));
-	// ÊÍ·Å´«Êä¿ØÖÆ¿é
+	// é‡Šæ”¾ä¼ è¾“æ§åˆ¶å—
 	security_sk_free(sk);
 	if (sk->sk_prot_creator->slab != NULL)
 		kmem_cache_free(sk->sk_prot_creator->slab, sk);
 	else
 		kfree(sk);
-	module_put(owner);		// ÊÍ·ÅÄ£¿éÒıÓÃ¼ÆÊı
+	module_put(owner);		// é‡Šæ”¾æ¨¡å—å¼•ç”¨è®¡æ•°
 }
-// ¸ù¾İÖ¸¶¨µÄ´«Êä¿ØÖÆ¿é¿ËÂ¡Ò»¸öĞÂµÄ´«Êä¿ØÖÆ¿é
+// æ ¹æ®æŒ‡å®šçš„ä¼ è¾“æ§åˆ¶å—å…‹éš†ä¸€ä¸ªæ–°çš„ä¼ è¾“æ§åˆ¶å—
 struct sock *sk_clone(const struct sock *sk, const gfp_t priority)
-{	// ·ÖÅäÒ»¸öĞÂµÄ¿ØÖÆ¿é
+{	// åˆ†é…ä¸€ä¸ªæ–°çš„æ§åˆ¶å—
 	struct sock *newsk = sk_alloc(sk->sk_family, priority, sk->sk_prot, 0);
 
 	if (newsk != NULL) {
 		struct sk_filter *filter;
 
-		sock_copy(newsk, sk);		// ½«ÀÏ¿ØÖÆ¿éÄÚÈİÈ«²¿¸´ÖÆµ½ĞÂ¿ØÖÆ¿éÖĞ
-		// ¶ÔĞÂµÄ¿ØÖÆ¿éµÄ³ÉÔ±×öÒ»Ğ©³õÊ¼»¯
+		sock_copy(newsk, sk);		// å°†è€æ§åˆ¶å—å†…å®¹å…¨éƒ¨å¤åˆ¶åˆ°æ–°æ§åˆ¶å—ä¸­
+		// å¯¹æ–°çš„æ§åˆ¶å—çš„æˆå‘˜åšä¸€äº›åˆå§‹åŒ–
 		/* SANITY */
 		sk_node_init(&newsk->sk_node);
 		sock_lock_init(newsk);
@@ -988,22 +988,22 @@ void __init sk_init(void)
  */
 
 
-/* 
- * Write buffer destructor automatically called from kfree_skb. 
- */	// ¸Ãº¯ÊıÍ¨³£ÉèÖÃµ½ÓÃÓÚÊä³öSKBµÄÏú»Ùº¯Êı½Ó¿ÚÉÏ£¬µ±ÊÍ·Å¸ÃSKBÊ±±»µ÷ÓÃ
+/*
+ * Write buffer destructor automatically called from kfree_skb.
+ */	// è¯¥å‡½æ•°é€šå¸¸è®¾ç½®åˆ°ç”¨äºè¾“å‡ºSKBçš„é”€æ¯å‡½æ•°æ¥å£ä¸Šï¼Œå½“é‡Šæ”¾è¯¥SKBæ—¶è¢«è°ƒç”¨
 void sock_wfree(struct sk_buff *skb)
 {
 	struct sock *sk = skb->sk;
 
 	/* In case it might be waiting for more memory. */
-	atomic_sub(skb->truesize, &sk->sk_wmem_alloc);			// ¸üĞÂÎª·¢ËÍ¶ø·ÖÅäµÄSKBÊı¾İÇøµÄ×Ü´óĞ¡
+	atomic_sub(skb->truesize, &sk->sk_wmem_alloc);			// æ›´æ–°ä¸ºå‘é€è€Œåˆ†é…çš„SKBæ•°æ®åŒºçš„æ€»å¤§å°
 	if (!sock_flag(sk, SOCK_USE_WRITE_QUEUE))
 		sk->sk_write_space(sk);
 	sock_put(sk);
 }
 
-/* 
- * Read buffer destructor automatically called from kfree_skb. 
+/*
+ * Read buffer destructor automatically called from kfree_skb.
  */
 void sock_rfree(struct sk_buff *skb)
 {
@@ -1035,10 +1035,10 @@ unsigned long sock_i_ino(struct sock *sk)
 
 /*
  * Allocate a skb from the socket's send buffer.
- */	// ·ÖÅä·¢ËÍ»º´æ¡£ÔÚTCPÖĞ£¬Ö»ÊÇÔÚ¹¹ÔìSYN+ACKÊ±Ê¹ÓÃ£¬·¢ËÍÓÃ»§Êı¾İÊ±Í¨³£Ê¹ÓÃsk_stream_alloc_pskb()·ÖÅä·¢ËÍ»º´æ
-struct sk_buff *sock_wmalloc(struct sock *sk/*´ı·ÖÅäSKBµÄËŞÖ÷´«Êä¿ØÖÆ¿é*/, unsigned long size/*´ı·ÖÅäSKBµÄ´óĞ¡*/, int force/*ÊÇ·ñÇ¿ÖÆ·ÖÅä*/,
-			     gfp_t priority/*ÄÚ´æ·ÖÅä·½Ê½*/)
-{	// Èç¹û½øĞĞÇ¿ÖÆ·ÖÅä»òÎª·¢ËÍ¶ø·ÖÅäµÄËùÓĞSKBÊı¾İÇø×Ü´óĞ¡Î´´ïµ½ÉÏÏŞ£¬ÔòÎªÖ¸¶¨´«Êä¿ØÖÆ¿é·ÖÅäSKB
+ */	// åˆ†é…å‘é€ç¼“å­˜ã€‚åœ¨TCPä¸­ï¼Œåªæ˜¯åœ¨æ„é€ SYN+ACKæ—¶ä½¿ç”¨ï¼Œå‘é€ç”¨æˆ·æ•°æ®æ—¶é€šå¸¸ä½¿ç”¨sk_stream_alloc_pskb()åˆ†é…å‘é€ç¼“å­˜
+struct sk_buff *sock_wmalloc(struct sock *sk/*å¾…åˆ†é…SKBçš„å®¿ä¸»ä¼ è¾“æ§åˆ¶å—*/, unsigned long size/*å¾…åˆ†é…SKBçš„å¤§å°*/, int force/*æ˜¯å¦å¼ºåˆ¶åˆ†é…*/,
+			     gfp_t priority/*å†…å­˜åˆ†é…æ–¹å¼*/)
+{	// å¦‚æœè¿›è¡Œå¼ºåˆ¶åˆ†é…æˆ–ä¸ºå‘é€è€Œåˆ†é…çš„æ‰€æœ‰SKBæ•°æ®åŒºæ€»å¤§å°æœªè¾¾åˆ°ä¸Šé™ï¼Œåˆ™ä¸ºæŒ‡å®šä¼ è¾“æ§åˆ¶å—åˆ†é…SKB
 	if (force || atomic_read(&sk->sk_wmem_alloc) < sk->sk_sndbuf) {
 		struct sk_buff * skb = alloc_skb(size, priority);
 		if (skb) {
@@ -1051,7 +1051,7 @@ struct sk_buff *sock_wmalloc(struct sock *sk/*´ı·ÖÅäSKBµÄËŞÖ÷´«Êä¿ØÖÆ¿é*/, unsig
 
 /*
  * Allocate a skb from the socket's receive buffer.
- */ 
+ */
 struct sk_buff *sock_rmalloc(struct sock *sk, unsigned long size, int force,
 			     gfp_t priority)
 {
@@ -1065,18 +1065,18 @@ struct sk_buff *sock_rmalloc(struct sock *sk, unsigned long size, int force,
 	return NULL;
 }
 
-/* 
+/*
  * Allocate a memory block from the socket's option memory buffer.
- */ // ÓÃÓÚ·ÖÅäÓĞ¹ØÑ¡ÏîµÄ»º´æ£¬±ÈÈçÌ×½Ó¿ÚµÄ¹ıÂËÆ÷¡¢×é²¥ÉèÖÃµÈ
+ */ // ç”¨äºåˆ†é…æœ‰å…³é€‰é¡¹çš„ç¼“å­˜ï¼Œæ¯”å¦‚å¥—æ¥å£çš„è¿‡æ»¤å™¨ã€ç»„æ’­è®¾ç½®ç­‰
 void *sock_kmalloc(struct sock *sk, int size, gfp_t priority)
 {
-	if ((unsigned)size <= sysctl_optmem_max &&				// ÅĞ¶ÏÎªÑ¡Ïî»º´æ·ÖÅäµÄSKB×Ü´óĞ¡ÊÇ·ñ³¬¹ıÏµÍ³×î´óÖµ
+	if ((unsigned)size <= sysctl_optmem_max &&				// åˆ¤æ–­ä¸ºé€‰é¡¹ç¼“å­˜åˆ†é…çš„SKBæ€»å¤§å°æ˜¯å¦è¶…è¿‡ç³»ç»Ÿæœ€å¤§å€¼
 	    atomic_read(&sk->sk_omem_alloc) + size < sysctl_optmem_max) {
 		void *mem;
 		/* First do the add, to avoid the race if kmalloc
  		 * might sleep.
 		 */
-		atomic_add(size, &sk->sk_omem_alloc);				// ¸üĞÂÑ¡Ïî»º´æ×ÜÊı
+		atomic_add(size, &sk->sk_omem_alloc);				// æ›´æ–°é€‰é¡¹ç¼“å­˜æ€»æ•°
 		mem = kmalloc(size, priority);
 		if (mem)
 			return mem;
@@ -1087,7 +1087,7 @@ void *sock_kmalloc(struct sock *sk, int size, gfp_t priority)
 
 /*
  * Free an option memory block.
- */	// ÊÍ·ÅÓÉsock_kmalloc()·ÖÅäµÄ»º´æ
+ */	// é‡Šæ”¾ç”±sock_kmalloc()åˆ†é…çš„ç¼“å­˜
 void sock_kfree_s(struct sock *sk, void *mem, int size)
 {
 	kfree(mem);
@@ -1096,28 +1096,28 @@ void sock_kfree_s(struct sock *sk, void *mem, int size)
 
 /* It is almost wait_for_tcp_memory minus release_sock/lock_sock.
    I think, these locks should be removed for datagram sockets.
- */		// µÈ´ı·ÖÅä¿ÉÓÃÓÚÊä³öµÄÄÚ´æ
+ */		// ç­‰å¾…åˆ†é…å¯ç”¨äºè¾“å‡ºçš„å†…å­˜
 static long sock_wait_for_wmem(struct sock * sk, long timeo)
 {
 	DEFINE_WAIT(wait);
 
-	clear_bit(SOCK_ASYNC_NOSPACE, &sk->sk_socket->flags);		// Çå³ısocketÖĞµÄ±êÖ¾
-	for (;;) {			// Ñ­»·µÈ´ı£¬ÖªµÀÂú×ãÏÂÃæÌõ¼şÖ®Ò»±ã½áÊø
-		if (!timeo)												// Ìõ¼ş µÈ´ı³¬Ê±
+	clear_bit(SOCK_ASYNC_NOSPACE, &sk->sk_socket->flags);		// æ¸…é™¤socketä¸­çš„æ ‡å¿—
+	for (;;) {			// å¾ªç¯ç­‰å¾…ï¼ŒçŸ¥é“æ»¡è¶³ä¸‹é¢æ¡ä»¶ä¹‹ä¸€ä¾¿ç»“æŸ
+		if (!timeo)												// æ¡ä»¶ ç­‰å¾…è¶…æ—¶
 			break;
-		if (signal_pending(current))							// Ìõ¼ş ½ÓÊÕµ½ĞÅºÅÁ¿
+		if (signal_pending(current))							// æ¡ä»¶ æ¥æ”¶åˆ°ä¿¡å·é‡
 			break;
 		set_bit(SOCK_NOSPACE, &sk->sk_socket->flags);
 		prepare_to_wait(sk->sk_sleep, &wait, TASK_INTERRUPTIBLE);
-		if (atomic_read(&sk->sk_wmem_alloc) < sk->sk_sndbuf)	// Ìõ¼ş Îª·¢ËÍ¶ø·ÖÅäµÄËùÓĞSKBÊı¾İÇø×Ü´óĞ¡ÒÑ¾­µÍÓÚÉÏÏŞ
+		if (atomic_read(&sk->sk_wmem_alloc) < sk->sk_sndbuf)	// æ¡ä»¶ ä¸ºå‘é€è€Œåˆ†é…çš„æ‰€æœ‰SKBæ•°æ®åŒºæ€»å¤§å°å·²ç»ä½äºä¸Šé™
 			break;
-		if (sk->sk_shutdown & SEND_SHUTDOWN)					// Ìõ¼ş ·¢ËÍÍ¨µÀ±»¹Ø±Õ
+		if (sk->sk_shutdown & SEND_SHUTDOWN)					// æ¡ä»¶ å‘é€é€šé“è¢«å…³é—­
 			break;
-		if (sk->sk_err)											// Ìõ¼ş ·¢ÉúÁËÖÂÃü´íÎó
+		if (sk->sk_err)											// æ¡ä»¶ å‘ç”Ÿäº†è‡´å‘½é”™è¯¯
 			break;
 		timeo = schedule_timeout(timeo);
 	}
-	finish_wait(sk->sk_sleep, &wait);							// ½áÊøµÈ´ı£¬·µ»ØÊ£ÓàÊ±¼ä
+	finish_wait(sk->sk_sleep, &wait);							// ç»“æŸç­‰å¾…ï¼Œè¿”å›å‰©ä½™æ—¶é—´
 	return timeo;
 }
 
@@ -1127,8 +1127,8 @@ static long sock_wait_for_wmem(struct sock * sk, long timeo)
  */
 
 static struct sk_buff *sock_alloc_send_pskb(struct sock *sk,
-					    unsigned long header_len/*´ı·ÖÅäSKBÏßĞÔÊı¾İÇø´óĞ¡*/,
-					    unsigned long data_len/*´ı·ÖÅäSKBµÄSGÀàĞÍµÄ¾ÛºÏ·ÖÉ¢I/OµÄÊı¾İÇøµÄ´óĞ¡*/,
+					    unsigned long header_len/*å¾…åˆ†é…SKBçº¿æ€§æ•°æ®åŒºå¤§å°*/,
+					    unsigned long data_len/*å¾…åˆ†é…SKBçš„SGç±»å‹çš„èšåˆåˆ†æ•£I/Oçš„æ•°æ®åŒºçš„å¤§å°*/,
 					    int noblock, int *errcode)
 {
 	struct sk_buff *skb;
@@ -1136,22 +1136,22 @@ static struct sk_buff *sock_alloc_send_pskb(struct sock *sk,
 	long timeo;
 	int err;
 
-	gfp_mask = sk->sk_allocation;		// »ñÈ¡´«Êä¿ØÖÆ¿éÖĞµÄÄÚ´æ·ÖÅä·½Ê½
-	if (gfp_mask & __GFP_WAIT)			// Èô·ÖÅäÄÚ´æÔÊĞíË¯Ãß£¬ÔòÌí¼Ó__GFP_REPEAT·½Ê½£¬¾¡¿ÉÄÜµÄ¶à³¢ÊÔ
+	gfp_mask = sk->sk_allocation;		// è·å–ä¼ è¾“æ§åˆ¶å—ä¸­çš„å†…å­˜åˆ†é…æ–¹å¼
+	if (gfp_mask & __GFP_WAIT)			// è‹¥åˆ†é…å†…å­˜å…è®¸ç¡çœ ï¼Œåˆ™æ·»åŠ __GFP_REPEATæ–¹å¼ï¼Œå°½å¯èƒ½çš„å¤šå°è¯•
 		gfp_mask |= __GFP_REPEAT;
 
-	timeo = sock_sndtimeo(sk, noblock);	// »ñÈ¡ÔÊĞíµÄ³¬Ê±Ê±¼ä
-	while (1) {	// Ñ­»·´¦Àí£¬Ö±ÖÁ³É¹¦·ÖÅäSKB»ò²Ù×÷³¬Ê±ÎªÖ¹
-		err = sock_error(sk);			// ¼ì²â´«Êä¿ØÖÆ¿éÊÇ·ñ·¢Éú¹ıÖÂÃü´íÎó£¬Èç¹ûÓĞ£¬Ôò½áÊø·ÖÅäSKB
+	timeo = sock_sndtimeo(sk, noblock);	// è·å–å…è®¸çš„è¶…æ—¶æ—¶é—´
+	while (1) {	// å¾ªç¯å¤„ç†ï¼Œç›´è‡³æˆåŠŸåˆ†é…SKBæˆ–æ“ä½œè¶…æ—¶ä¸ºæ­¢
+		err = sock_error(sk);			// æ£€æµ‹ä¼ è¾“æ§åˆ¶å—æ˜¯å¦å‘ç”Ÿè¿‡è‡´å‘½é”™è¯¯ï¼Œå¦‚æœæœ‰ï¼Œåˆ™ç»“æŸåˆ†é…SKB
 		if (err != 0)
 			goto failure;
 
 		err = -EPIPE;
-		if (sk->sk_shutdown & SEND_SHUTDOWN)	// Èç¹û¹Ø±ÕÁËÊä³öÍ¨µÀ£¬Ôò½áÊø·ÖÅäSKB
+		if (sk->sk_shutdown & SEND_SHUTDOWN)	// å¦‚æœå…³é—­äº†è¾“å‡ºé€šé“ï¼Œåˆ™ç»“æŸåˆ†é…SKB
 			goto failure;
-		// ÔÚ´«Êä¿ØÖÆ¿éÒò·¢ËÍ¶ø·ÖÅäµÄËùÓĞSKBÊı¾İÇø×Ü´óĞ¡Î´´ïµ½ÉÏÏŞ£¬²ÅÄÜ¼ÌĞø·ÖÅäSKB
+		// åœ¨ä¼ è¾“æ§åˆ¶å—å› å‘é€è€Œåˆ†é…çš„æ‰€æœ‰SKBæ•°æ®åŒºæ€»å¤§å°æœªè¾¾åˆ°ä¸Šé™ï¼Œæ‰èƒ½ç»§ç»­åˆ†é…SKB
 		if (atomic_read(&sk->sk_wmem_alloc) < sk->sk_sndbuf) {
-			skb = alloc_skb(header_len, gfp_mask);	// ·ÖÅäSKB¿é
+			skb = alloc_skb(header_len, gfp_mask);	// åˆ†é…SKBå—
 			if (skb) {
 				int npages;
 				int i;
@@ -1163,7 +1163,7 @@ static struct sk_buff *sock_alloc_send_pskb(struct sock *sk,
 				npages = (data_len + (PAGE_SIZE - 1)) >> PAGE_SHIFT;
 				skb->truesize += data_len;
 				skb_shinfo(skb)->nr_frags = npages;
-				for (i = 0; i < npages; i++) {		// ·ÖÅäSGÀàĞÍµÄ¾ÛºÏ·ÖÉ¢I/OµÄÊı¾İÇø
+				for (i = 0; i < npages; i++) {		// åˆ†é…SGç±»å‹çš„èšåˆåˆ†æ•£I/Oçš„æ•°æ®åŒº
 					struct page *page;
 					skb_frag_t *frag;
 
@@ -1187,20 +1187,20 @@ static struct sk_buff *sock_alloc_send_pskb(struct sock *sk,
 				/* Full success... */
 				break;
 			}
-			err = -ENOBUFS;			// ·ÖÅäÊ§°Ü£¬·µ»Ø´íÎóÂë
+			err = -ENOBUFS;			// åˆ†é…å¤±è´¥ï¼Œè¿”å›é”™è¯¯ç 
 			goto failure;
-		}// Èç¹û·¢ËÍSKB×ÜÁ¿´ïµ½ÉÏÏŞ£¬ÔòÔÚÌ×½Ó¿ÚÖĞÉèÖÃÏÂÃæÁ½¸ö±êÖ¾
-		set_bit(SOCK_ASYNC_NOSPACE, &sk->sk_socket->flags);	// ±êÊ¶Ì×½Ó¿Ú·¢ËÍ¶ÓÁĞÊÇ·ñÂú
-		set_bit(SOCK_NOSPACE, &sk->sk_socket->flags);		// ±êÊ¶ÔÚ·ÇÒì²½µÄÇé¿öÏÂ£¬¸ÃÌ×½Ó¿ÚµÄ·¢ËÍ¶ÓÁĞÊÇ·ñÂú
+		}// å¦‚æœå‘é€SKBæ€»é‡è¾¾åˆ°ä¸Šé™ï¼Œåˆ™åœ¨å¥—æ¥å£ä¸­è®¾ç½®ä¸‹é¢ä¸¤ä¸ªæ ‡å¿—
+		set_bit(SOCK_ASYNC_NOSPACE, &sk->sk_socket->flags);	// æ ‡è¯†å¥—æ¥å£å‘é€é˜Ÿåˆ—æ˜¯å¦æ»¡
+		set_bit(SOCK_NOSPACE, &sk->sk_socket->flags);		// æ ‡è¯†åœ¨éå¼‚æ­¥çš„æƒ…å†µä¸‹ï¼Œè¯¥å¥—æ¥å£çš„å‘é€é˜Ÿåˆ—æ˜¯å¦æ»¡
 		err = -EAGAIN;
-		if (!timeo)					// Èç¹û·ÖÅä¹ı³Ì³¬Ê±£¬Ôò·µ»ØÏàÓ¦´íÎóÂë
+		if (!timeo)					// å¦‚æœåˆ†é…è¿‡ç¨‹è¶…æ—¶ï¼Œåˆ™è¿”å›ç›¸åº”é”™è¯¯ç 
 			goto failure;
-		if (signal_pending(current))// Èç¹û½ø³ÌµÃµ½ĞÅºÅ£¬Ôò·µ»ØÏàÓ¦µÄ´íÎóÂë
+		if (signal_pending(current))// å¦‚æœè¿›ç¨‹å¾—åˆ°ä¿¡å·ï¼Œåˆ™è¿”å›ç›¸åº”çš„é”™è¯¯ç 
 			goto interrupted;
-		timeo = sock_wait_for_wmem(sk, timeo);	// ÔÚÔÊĞí³¬Ê±Ê±¼äÄÚµÈ´ı¿É·ÖÅäÄÚ´æ
+		timeo = sock_wait_for_wmem(sk, timeo);	// åœ¨å…è®¸è¶…æ—¶æ—¶é—´å†…ç­‰å¾…å¯åˆ†é…å†…å­˜
 	}
 
-	skb_set_owner_w(skb, sk);		// ÉèÖÃSKBµÄËŞÖ÷´«Êä¿ØÖÆ¿é
+	skb_set_owner_w(skb, sk);		// è®¾ç½®SKBçš„å®¿ä¸»ä¼ è¾“æ§åˆ¶å—
 	return skb;
 
 interrupted:
@@ -1209,9 +1209,9 @@ failure:
 	*errcode = err;
 	return NULL;
 }
-// ÎªUDPºÍRAWÌ×½Ó¿Ú·ÖÅäÓÃÓÚÊä³öµÄSKB
-struct sk_buff *sock_alloc_send_skb(struct sock *sk/*´ı·ÖÅäµÄËŞÖ÷´«Êä¿ØÖÆ¿é*/, unsigned long size/*´ı·ÖÅäµÄSKB´óĞ¡*/, 
-				    int noblock/*·ÖÅäSKBÊ±ÊÇ·ñÔÊĞí×èÈû*/, int *errcode/*·µ»Ø²Ù×÷µÄ´íÎóÂë*/)
+// ä¸ºUDPå’ŒRAWå¥—æ¥å£åˆ†é…ç”¨äºè¾“å‡ºçš„SKB
+struct sk_buff *sock_alloc_send_skb(struct sock *sk/*å¾…åˆ†é…çš„å®¿ä¸»ä¼ è¾“æ§åˆ¶å—*/, unsigned long size/*å¾…åˆ†é…çš„SKBå¤§å°*/,
+				    int noblock/*åˆ†é…SKBæ—¶æ˜¯å¦å…è®¸é˜»å¡*/, int *errcode/*è¿”å›æ“ä½œçš„é”™è¯¯ç */)
 {
 	return sock_alloc_send_pskb(sk, size, 0, noblock, errcode);
 }
@@ -1231,20 +1231,20 @@ static void __lock_sock(struct sock *sk)
 	}
 	finish_wait(&sk->sk_lock.wq, &wait);
 }
-// ¶Ôºó±¸¶ÓÁĞ½øĞĞ²Ù×÷¡£Èé¹µºó±¸¶ÓÁĞÖĞ»¹´æÔÚSKB£¬Ôò±éÀúºó±¸¶ÓÁĞ½«¶ÓÁĞÖĞµÄSKBÍ¨¹ı´«Êä¿ØÖÆ¿éµÄsk_backlog_rcv½Ó¿Ú½øĞĞ´¦Àí
+// å¯¹åå¤‡é˜Ÿåˆ—è¿›è¡Œæ“ä½œã€‚ä¹³æ²Ÿåå¤‡é˜Ÿåˆ—ä¸­è¿˜å­˜åœ¨SKBï¼Œåˆ™éå†åå¤‡é˜Ÿåˆ—å°†é˜Ÿåˆ—ä¸­çš„SKBé€šè¿‡ä¼ è¾“æ§åˆ¶å—çš„sk_backlog_rcvæ¥å£è¿›è¡Œå¤„ç†
 static void __release_sock(struct sock *sk)
 {
 	struct sk_buff *skb = sk->sk_backlog.head;
 
-	do {		
-		sk->sk_backlog.head = sk->sk_backlog.tail = NULL;		// ÏÈ½«ºó±¸¶ÓÁĞµÄÍ·ºÍÎ²Ö¸ÕëÇå¿Õ£¬¶ÓÁĞÒÑ×ö±¸·İ
-		bh_unlock_sock(sk);										// ÊÍ·ÅËø
+	do {
+		sk->sk_backlog.head = sk->sk_backlog.tail = NULL;		// å…ˆå°†åå¤‡é˜Ÿåˆ—çš„å¤´å’Œå°¾æŒ‡é’ˆæ¸…ç©ºï¼Œé˜Ÿåˆ—å·²åšå¤‡ä»½
+		bh_unlock_sock(sk);										// é‡Šæ”¾é”
 
-		do {		// ±éÀúÖ®Ç°È¡³öµÄºó±¸¶ÓÁĞ
+		do {		// éå†ä¹‹å‰å–å‡ºçš„åå¤‡é˜Ÿåˆ—
 			struct sk_buff *next = skb->next;
 
 			skb->next = NULL;
-			sk->sk_backlog_rcv(sk, skb);			// µ÷ÓÃsk_backlog_rcvº¯Êı½øĞĞ´¦Àí
+			sk->sk_backlog_rcv(sk, skb);			// è°ƒç”¨sk_backlog_rcvå‡½æ•°è¿›è¡Œå¤„ç†
 
 			/*
 			 * We are in process context here with softirqs
@@ -1258,7 +1258,7 @@ static void __release_sock(struct sock *sk)
 		} while (skb != NULL);
 
 		bh_lock_sock(sk);
-	} while((skb = sk->sk_backlog.head) != NULL);	// ÅĞ¶Ïºó±¸¶ÓÁĞÊÇ·ñÓÖÓĞĞÂÔö³ÉÔ±
+	} while((skb = sk->sk_backlog.head) != NULL);	// åˆ¤æ–­åå¤‡é˜Ÿåˆ—æ˜¯å¦åˆæœ‰æ–°å¢æˆå‘˜
 }
 
 /**
@@ -1298,7 +1298,7 @@ int sock_no_bind(struct socket *sock, struct sockaddr *saddr, int len)
 	return -EOPNOTSUPP;
 }
 
-int sock_no_connect(struct socket *sock, struct sockaddr *saddr, 
+int sock_no_connect(struct socket *sock, struct sockaddr *saddr,
 		    int len, int flags)
 {
 	return -EOPNOTSUPP;
@@ -1314,7 +1314,7 @@ int sock_no_accept(struct socket *sock, struct socket *newsock, int flags)
 	return -EOPNOTSUPP;
 }
 
-int sock_no_getname(struct socket *sock, struct sockaddr *saddr, 
+int sock_no_getname(struct socket *sock, struct sockaddr *saddr,
 		    int *len, int peer)
 {
 	return -EOPNOTSUPP;
@@ -1386,7 +1386,7 @@ ssize_t sock_no_sendpage(struct socket *sock, struct page *page, int offset, siz
 /*
  *	Default Socket Callbacks
  */
-// ÓÃÓÚ»½ĞÑ´«Êä¿ØÖÆ¿éµÄsk_sleep¶ÓÁĞÉÏµÄË¯Ãß½ø³Ì,ÊÇ´«Êä¿ØÖÆ¿éÄ¬ÈÏµÄ»½ĞÑµÈ´ı¸ÃÌ×½Ó¿Úº¯Êı£¬¸Ãº¯Êı±»ÉèÖÃµ½´«Êä¿ØÖÆ¿éµÄsk_state_change½Ó¿ÚÉÏ
+// ç”¨äºå”¤é†’ä¼ è¾“æ§åˆ¶å—çš„sk_sleepé˜Ÿåˆ—ä¸Šçš„ç¡çœ è¿›ç¨‹,æ˜¯ä¼ è¾“æ§åˆ¶å—é»˜è®¤çš„å”¤é†’ç­‰å¾…è¯¥å¥—æ¥å£å‡½æ•°ï¼Œè¯¥å‡½æ•°è¢«è®¾ç½®åˆ°ä¼ è¾“æ§åˆ¶å—çš„sk_state_changeæ¥å£ä¸Š
 static void sock_def_wakeup(struct sock *sk)
 {
 	read_lock(&sk->sk_callback_lock);
@@ -1394,16 +1394,16 @@ static void sock_def_wakeup(struct sock *sk)
 		wake_up_interruptible_all(sk->sk_sleep);
 	read_unlock(&sk->sk_callback_lock);
 }
-// ÓÃÓÚ»½ĞÑ´«Êä¿ØÖÆ¿éµÄsk_sleep¶ÓÁĞÉÏµÄË¯Ãß½ø³ÌºÍÍ¨ÖªÌ×½Ó¿ÚµÄfasync_list¶ÓÁĞÉÏ½ø³Ì¡£±»ÉèÖÃµ½´«Êä¿ØÖÆ¿éµÄsk_error_report½Ó¿ÚÉÏ£¬Í¨³£µ±´«Êä¿ØÖÆ¿é·¢ËÍ´íÎóÊ±±»µ÷ÓÃ
+// ç”¨äºå”¤é†’ä¼ è¾“æ§åˆ¶å—çš„sk_sleepé˜Ÿåˆ—ä¸Šçš„ç¡çœ è¿›ç¨‹å’Œé€šçŸ¥å¥—æ¥å£çš„fasync_listé˜Ÿåˆ—ä¸Šè¿›ç¨‹ã€‚è¢«è®¾ç½®åˆ°ä¼ è¾“æ§åˆ¶å—çš„sk_error_reportæ¥å£ä¸Šï¼Œé€šå¸¸å½“ä¼ è¾“æ§åˆ¶å—å‘é€é”™è¯¯æ—¶è¢«è°ƒç”¨
 static void sock_def_error_report(struct sock *sk)
 {
 	read_lock(&sk->sk_callback_lock);
 	if (sk->sk_sleep && waitqueue_active(sk->sk_sleep))
 		wake_up_interruptible(sk->sk_sleep);
-	sk_wake_async(sk,0,POLL_ERR); 
+	sk_wake_async(sk,0,POLL_ERR);
 	read_unlock(&sk->sk_callback_lock);
 }
-// ÓÃÓÚ»½ĞÑ´«Êä¿ØÖÆ¿éµÄsk_sleep¶ÓÁĞÉÏµÄË¯Ãß½ø³ÌºÍÍ¨ÖªÌ×½Ó¿ÚµÄfasync_list¶ÓÁĞÉÏµÄ½ø³Ì¡£¸Ãº¯Êı±»ÉèÖÃµ½´«Êä¿ØÖÆ¿éµÄsk_data_ready½Ó¿ÚÉÏ£¬µ±´«Êä¿ØÖÆ¿éÊÕµ½Êı¾İ°ü£¬´æÔÚ¿É¶ÁÊı¾İÖ®ºó±»µ÷ÓÃ
+// ç”¨äºå”¤é†’ä¼ è¾“æ§åˆ¶å—çš„sk_sleepé˜Ÿåˆ—ä¸Šçš„ç¡çœ è¿›ç¨‹å’Œé€šçŸ¥å¥—æ¥å£çš„fasync_listé˜Ÿåˆ—ä¸Šçš„è¿›ç¨‹ã€‚è¯¥å‡½æ•°è¢«è®¾ç½®åˆ°ä¼ è¾“æ§åˆ¶å—çš„sk_data_readyæ¥å£ä¸Šï¼Œå½“ä¼ è¾“æ§åˆ¶å—æ”¶åˆ°æ•°æ®åŒ…ï¼Œå­˜åœ¨å¯è¯»æ•°æ®ä¹‹åè¢«è°ƒç”¨
 static void sock_def_readable(struct sock *sk, int len)
 {
 	read_lock(&sk->sk_callback_lock);
@@ -1412,14 +1412,14 @@ static void sock_def_readable(struct sock *sk, int len)
 	sk_wake_async(sk,1,POLL_IN);
 	read_unlock(&sk->sk_callback_lock);
 }
-// ¼ì²âÒÑÊ¹ÓÃµÄ·¢ËÍ»º´æÇø´óĞ¡£¬Èô´ïµ½Ö¸¶¨Öµ£¬»á»½ĞÑ´«Êä¿ØÖÆ¿éµÄsk_sleep¶ÓÁĞÉÏµÄË¯Ãß½ø³Ì²¢Í¨Öªfasync_list¶ÓÁĞÉÏµÄ½ø³Ì¡£ÎªÄ¬ÈÏµÄ»½ĞÑº¯Êı£¬ÉèÖÃµ½sk_write_spaceº¯ÊıÖ¸ÕëÉÏ
+// æ£€æµ‹å·²ä½¿ç”¨çš„å‘é€ç¼“å­˜åŒºå¤§å°ï¼Œè‹¥è¾¾åˆ°æŒ‡å®šå€¼ï¼Œä¼šå”¤é†’ä¼ è¾“æ§åˆ¶å—çš„sk_sleepé˜Ÿåˆ—ä¸Šçš„ç¡çœ è¿›ç¨‹å¹¶é€šçŸ¥fasync_listé˜Ÿåˆ—ä¸Šçš„è¿›ç¨‹ã€‚ä¸ºé»˜è®¤çš„å”¤é†’å‡½æ•°ï¼Œè®¾ç½®åˆ°sk_write_spaceå‡½æ•°æŒ‡é’ˆä¸Š
 static void sock_def_write_space(struct sock *sk)
 {
 	read_lock(&sk->sk_callback_lock);
 
 	/* Do not wake up a writer until he can make "significant"
 	 * progress.  --DaveM
-	 */	// ¼ì²âµ±Ç°Îª·¢ËÍ¶ø·ÖÅäµÄ·¢ËÍSKB×Ü´óĞ¡ÊÇ·ñĞ¡ÓÚÅäÖÃµÄ·¢ËÍ»º´æÇøÉÏÏŞ£¬Èç¹ûÃ»ÓĞ´ïµ½ÉÏÏŞ£¬Ôò»½ĞÑµÈ´ı½ø³Ì
+	 */	// æ£€æµ‹å½“å‰ä¸ºå‘é€è€Œåˆ†é…çš„å‘é€SKBæ€»å¤§å°æ˜¯å¦å°äºé…ç½®çš„å‘é€ç¼“å­˜åŒºä¸Šé™ï¼Œå¦‚æœæ²¡æœ‰è¾¾åˆ°ä¸Šé™ï¼Œåˆ™å”¤é†’ç­‰å¾…è¿›ç¨‹
 	if((atomic_read(&sk->sk_wmem_alloc) << 1) <= sk->sk_sndbuf) {
 		if (sk->sk_sleep && waitqueue_active(sk->sk_sleep))
 			wake_up_interruptible(sk->sk_sleep);
@@ -1436,7 +1436,7 @@ static void sock_def_destruct(struct sock *sk)
 {
 	kfree(sk->sk_protinfo);
 }
-// µ±ÊÕµ½´øÍâÊı¾İÖ®ºó£¬¸Ãº¯ÊıÍ¨ÖªµÈ´ı´¦Àí´øÍâÊı¾İµÄÌ×½Ó¿Úfasync_list¶ÓÁĞÉÏµÄ½ø³Ì
+// å½“æ”¶åˆ°å¸¦å¤–æ•°æ®ä¹‹åï¼Œè¯¥å‡½æ•°é€šçŸ¥ç­‰å¾…å¤„ç†å¸¦å¤–æ•°æ®çš„å¥—æ¥å£fasync_listé˜Ÿåˆ—ä¸Šçš„è¿›ç¨‹
 void sk_send_sigurg(struct sock *sk)
 {
 	if (sk->sk_socket && sk->sk_socket->file)
@@ -1473,7 +1473,7 @@ void sock_init_data(struct socket *sock, struct sock *sk)
 	sk->sk_send_head	=	NULL;
 
 	init_timer(&sk->sk_timer);
-	
+
 	sk->sk_allocation	=	GFP_KERNEL;
 	sk->sk_rcvbuf		=	sysctl_rmem_default;
 	sk->sk_sndbuf		=	sysctl_wmem_default;
@@ -1520,59 +1520,59 @@ void sock_init_data(struct socket *sock, struct sock *sk)
 
 void fastcall lock_sock_nested(struct sock *sk, int subclass)
 {
-	might_sleep();							// Èç¹û½ø³ÌÓĞ±ØÒªË¯Ãß£¬ÔòÏÈË¯Ãß£¬·µ»ØºóÔÙÉÏËø
-	spin_lock_bh(&sk->sk_lock.slock);		// ¶Ô×ÔĞıËøÉÏËø£¬²¢½ûÖ¹ÈíÖĞ¶Ï
-	if (sk->sk_lock.owner)					// Èç¹ûownerÒÑ¾­±»ÉèÖÃ£¬±íÊ¾´«Êä¿ØÖÆ¿éÒÑ±»ÆäËû½ø³ÌËø¶¨
-		__lock_sock(sk);					// µÈ´ı£¬Ö±µ½Ëø¶¨ËüµÄ½ø³Ì½âËø
-	sk->sk_lock.owner = (void *)1;			// ÉèÖÃownerÎª1
-	spin_unlock(&sk->sk_lock.slock);		// ½âËø
+	might_sleep();							// å¦‚æœè¿›ç¨‹æœ‰å¿…è¦ç¡çœ ï¼Œåˆ™å…ˆç¡çœ ï¼Œè¿”å›åå†ä¸Šé”
+	spin_lock_bh(&sk->sk_lock.slock);		// å¯¹è‡ªæ—‹é”ä¸Šé”ï¼Œå¹¶ç¦æ­¢è½¯ä¸­æ–­
+	if (sk->sk_lock.owner)					// å¦‚æœownerå·²ç»è¢«è®¾ç½®ï¼Œè¡¨ç¤ºä¼ è¾“æ§åˆ¶å—å·²è¢«å…¶ä»–è¿›ç¨‹é”å®š
+		__lock_sock(sk);					// ç­‰å¾…ï¼Œç›´åˆ°é”å®šå®ƒçš„è¿›ç¨‹è§£é”
+	sk->sk_lock.owner = (void *)1;			// è®¾ç½®ownerä¸º1
+	spin_unlock(&sk->sk_lock.slock);		// è§£é”
 	/*
 	 * The sk_lock has mutex_lock() semantics here:
 	 */
 	mutex_acquire(&sk->sk_lock.dep_map, subclass, 0, _RET_IP_);
-	local_bh_enable();						// ¿ªÆôÈíÖĞ¶Ï
+	local_bh_enable();						// å¼€å¯è½¯ä¸­æ–­
 }
 
 EXPORT_SYMBOL(lock_sock_nested);
-// ½âËø´«Êä¿ØÖÆ¿é£¬½âËøÇ°£¬Èç¹ûºó±¸¶ÓÁĞÖĞ´æÔÚÊı¾İ°ü£¬Ôò»¹Òª¶ÔËûÃÇ½øĞĞ´¦Àí
+// è§£é”ä¼ è¾“æ§åˆ¶å—ï¼Œè§£é”å‰ï¼Œå¦‚æœåå¤‡é˜Ÿåˆ—ä¸­å­˜åœ¨æ•°æ®åŒ…ï¼Œåˆ™è¿˜è¦å¯¹ä»–ä»¬è¿›è¡Œå¤„ç†
 void fastcall release_sock(struct sock *sk)
 {
 	/*
 	 * The sk_lock has mutex_unlock() semantics:
-	 */	// µ÷ÊÔÏà¹Ø
+	 */	// è°ƒè¯•ç›¸å…³
 	mutex_release(&sk->sk_lock.dep_map, 1, _RET_IP_);
-	// ÄÃËø£¬¹Ø±ÕÈíÖĞ¶Ï£¬±£»¤¶ÔownerµÄĞ´²Ù×÷
+	// æ‹¿é”ï¼Œå…³é—­è½¯ä¸­æ–­ï¼Œä¿æŠ¤å¯¹ownerçš„å†™æ“ä½œ
 	spin_lock_bh(&sk->sk_lock.slock);
-	if (sk->sk_backlog.tail)		// Èç¹ûºó±¸¶ÓÁĞÖĞ´æÔÚÊı¾İ°ü£¬Ôòµ÷ÓÃ__release_sock()´¦Àí£¬½«Êı¾İ¸´ÖÆµ½ÓÃ»§¿Õ¼äµÄ»º´æÇøÖĞ»òÌí¼Óµ½½ÓÊÕ¶ÓÁĞÖĞ
+	if (sk->sk_backlog.tail)		// å¦‚æœåå¤‡é˜Ÿåˆ—ä¸­å­˜åœ¨æ•°æ®åŒ…ï¼Œåˆ™è°ƒç”¨__release_sock()å¤„ç†ï¼Œå°†æ•°æ®å¤åˆ¶åˆ°ç”¨æˆ·ç©ºé—´çš„ç¼“å­˜åŒºä¸­æˆ–æ·»åŠ åˆ°æ¥æ”¶é˜Ÿåˆ—ä¸­
 		__release_sock(sk);
-	sk->sk_lock.owner = NULL;		// Çå³ıowner
-	if (waitqueue_active(&sk->sk_lock.wq))	// ÔÚÉÏËø²¢²Ù×÷´Ë¿ØÖÆ¿éÆÚ¼ä£¬Èç¹ûÓĞÆäËû½ø³ÌµÈ´ıÉÏËø´Ë´«Êä¿ØÖÆ¿é£¬Ôò»½ĞÑËûÃÇ
+	sk->sk_lock.owner = NULL;		// æ¸…é™¤owner
+	if (waitqueue_active(&sk->sk_lock.wq))	// åœ¨ä¸Šé”å¹¶æ“ä½œæ­¤æ§åˆ¶å—æœŸé—´ï¼Œå¦‚æœæœ‰å…¶ä»–è¿›ç¨‹ç­‰å¾…ä¸Šé”æ­¤ä¼ è¾“æ§åˆ¶å—ï¼Œåˆ™å”¤é†’ä»–ä»¬
 		wake_up(&sk->sk_lock.wq);
-	spin_unlock_bh(&sk->sk_lock.slock);		// Íê³É½âËøºó£¬½âËøslock×ÔĞıËø£¬²¢¿ªÆôÈíÖĞ¶Ï
+	spin_unlock_bh(&sk->sk_lock.slock);		// å®Œæˆè§£é”åï¼Œè§£é”slockè‡ªæ—‹é”ï¼Œå¹¶å¼€å¯è½¯ä¸­æ–­
 }
 EXPORT_SYMBOL(release_sock);
 
 int sock_get_timestamp(struct sock *sk, struct timeval __user *userstamp)
-{ 
+{
 	if (!sock_flag(sk, SOCK_TIMESTAMP))
 		sock_enable_timestamp(sk);
-	if (sk->sk_stamp.tv_sec == -1) 
+	if (sk->sk_stamp.tv_sec == -1)
 		return -ENOENT;
 	if (sk->sk_stamp.tv_sec == 0)
 		do_gettimeofday(&sk->sk_stamp);
 	return copy_to_user(userstamp, &sk->sk_stamp, sizeof(struct timeval)) ?
-		-EFAULT : 0; 
-} 
+		-EFAULT : 0;
+}
 EXPORT_SYMBOL(sock_get_timestamp);
 
 void sock_enable_timestamp(struct sock *sk)
-{	
-	if (!sock_flag(sk, SOCK_TIMESTAMP)) { 
+{
+	if (!sock_flag(sk, SOCK_TIMESTAMP)) {
 		sock_set_flag(sk, SOCK_TIMESTAMP);
 		net_enable_timestamp();
 	}
 }
-EXPORT_SYMBOL(sock_enable_timestamp); 
+EXPORT_SYMBOL(sock_enable_timestamp);
 
 /*
  *	Get a socket option on an socket.
@@ -1686,16 +1686,16 @@ void sk_common_release(struct sock *sk)
 EXPORT_SYMBOL(sk_common_release);
 
 static DEFINE_RWLOCK(proto_list_lock);
-static LIST_HEAD(proto_list);						// Ğ­Òé×åÁ´±í  cat /proc/net/protocols
-// ×¢²áprotoÊµÀıµ½proto_listÁ´±íÖĞ£¬alloc_slab±êÊ¶ÊÇ·ñ´´½¨ÓÃÓÚ·ÖÅä¿ØÖÆ¿éµÄslab¸ßËÙ»º´æ
+static LIST_HEAD(proto_list);						// åè®®æ—é“¾è¡¨  cat /proc/net/protocols
+// æ³¨å†Œprotoå®ä¾‹åˆ°proto_listé“¾è¡¨ä¸­ï¼Œalloc_slabæ ‡è¯†æ˜¯å¦åˆ›å»ºç”¨äºåˆ†é…æ§åˆ¶å—çš„slabé«˜é€Ÿç¼“å­˜
 int proto_register(struct proto *prot, int alloc_slab)
 {
 	char *request_sock_slab_name = NULL;
 	char *timewait_sock_slab_name;
 	int rc = -ENOBUFS;
 
-	if (alloc_slab) {		// ´¦ÀíĞèÒª´´½¨ÓÃÓÚ·ÖÅä¿ØÖÆ¿éµÄslab»º´æµÄÇé¿ö
-		prot->slab = kmem_cache_create(prot->name, prot->obj_size, 0,			// ´´½¨ÓÃÓÚ·ÖÅä´«Êä¿ØÖÆ¿éµÄslab»º´æ
+	if (alloc_slab) {		// å¤„ç†éœ€è¦åˆ›å»ºç”¨äºåˆ†é…æ§åˆ¶å—çš„slabç¼“å­˜çš„æƒ…å†µ
+		prot->slab = kmem_cache_create(prot->name, prot->obj_size, 0,			// åˆ›å»ºç”¨äºåˆ†é…ä¼ è¾“æ§åˆ¶å—çš„slabç¼“å­˜
 					       SLAB_HWCACHE_ALIGN, NULL, NULL);
 
 		if (prot->slab == NULL) {
@@ -1704,7 +1704,7 @@ int proto_register(struct proto *prot, int alloc_slab)
 			goto out;
 		}
 
-		if (prot->rsk_prot != NULL) {	// Èç¹ûÁ¬½ÓÇëÇó´¦Àí½Ó¿ÚÓĞĞ§£¬Ôò´´½¨·ÖÅäÁ¬½ÓÇëÇó¿éµÄslab»º´æ
+		if (prot->rsk_prot != NULL) {	// å¦‚æœè¿æ¥è¯·æ±‚å¤„ç†æ¥å£æœ‰æ•ˆï¼Œåˆ™åˆ›å»ºåˆ†é…è¿æ¥è¯·æ±‚å—çš„slabç¼“å­˜
 			static const char mask[] = "request_sock_%s";
 
 			request_sock_slab_name = kmalloc(strlen(prot->name) + sizeof(mask) - 1, GFP_KERNEL);
@@ -1723,7 +1723,7 @@ int proto_register(struct proto *prot, int alloc_slab)
 			}
 		}
 
-		if (prot->twsk_prot != NULL) {	// Èç¹ûtimewait¿ØÖÆ¿é²Ù×÷½Ó¿ÚÓĞĞ§£¬Ôò´´½¨·ÖÅätimewait¿ØÖÆ¿éµÄslab»º´æ
+		if (prot->twsk_prot != NULL) {	// å¦‚æœtimewaitæ§åˆ¶å—æ“ä½œæ¥å£æœ‰æ•ˆï¼Œåˆ™åˆ›å»ºåˆ†é…timewaitæ§åˆ¶å—çš„slabç¼“å­˜
 			static const char mask[] = "tw_sock_%s";
 
 			timewait_sock_slab_name = kmalloc(strlen(prot->name) + sizeof(mask) - 1, GFP_KERNEL);
@@ -1741,14 +1741,14 @@ int proto_register(struct proto *prot, int alloc_slab)
 				goto out_free_timewait_sock_slab_name;
 		}
 	}
-	// ½«protoÊµÀıÌí¼Óµ½proto_listÁ´±íÖĞ
+	// å°†protoå®ä¾‹æ·»åŠ åˆ°proto_listé“¾è¡¨ä¸­
 	write_lock(&proto_list_lock);
 	list_add(&prot->node, &proto_list);
 	write_unlock(&proto_list_lock);
 	rc = 0;
 out:
 	return rc;
-out_free_timewait_sock_slab_name:			// ÔÚÊ§°Üºó×öµÄÒ»Ğ©´¦Àí
+out_free_timewait_sock_slab_name:			// åœ¨å¤±è´¥ååšçš„ä¸€äº›å¤„ç†
 	kfree(timewait_sock_slab_name);
 out_free_request_sock_slab:
 	if (prot->rsk_prot && prot->rsk_prot->slab) {
@@ -1764,18 +1764,18 @@ out_free_sock_slab:
 }
 
 EXPORT_SYMBOL(proto_register);
-// ½«ÒÑ×¢²áproto_listÁ´±íÖĞµÄprotoÊµÀıÉ¾³ı
+// å°†å·²æ³¨å†Œproto_listé“¾è¡¨ä¸­çš„protoå®ä¾‹åˆ é™¤
 void proto_unregister(struct proto *prot)
 {
-	write_lock(&proto_list_lock);			// É¾³ıproto_listÖĞµÄÊµÀı
+	write_lock(&proto_list_lock);			// åˆ é™¤proto_listä¸­çš„å®ä¾‹
 	list_del(&prot->node);
 	write_unlock(&proto_list_lock);
-	// ÊÍ·ÅÓÃÓÚ·ÖÅä´«Êä¿ØÖÆ¿éµÄslab»º´æ
-	if (prot->slab != NULL) {				
+	// é‡Šæ”¾ç”¨äºåˆ†é…ä¼ è¾“æ§åˆ¶å—çš„slabç¼“å­˜
+	if (prot->slab != NULL) {
 		kmem_cache_destroy(prot->slab);
 		prot->slab = NULL;
 	}
-	// ÊÍ·ÅÓÃÓÚ·ÖÅäÁ¬½ÓÇëÇó¿éµÄslab»º´æ
+	// é‡Šæ”¾ç”¨äºåˆ†é…è¿æ¥è¯·æ±‚å—çš„slabç¼“å­˜
 	if (prot->rsk_prot != NULL && prot->rsk_prot->slab != NULL) {
 		const char *name = kmem_cache_name(prot->rsk_prot->slab);
 
@@ -1783,7 +1783,7 @@ void proto_unregister(struct proto *prot)
 		kfree(name);
 		prot->rsk_prot->slab = NULL;
 	}
-	// ÊÍ·ÅÓÃÓÚ´´½¨·ÖÅätimewait¿ØÖÆ¿éµÄslab»º´æ
+	// é‡Šæ”¾ç”¨äºåˆ›å»ºåˆ†é…timewaitæ§åˆ¶å—çš„slabç¼“å­˜
 	if (prot->twsk_prot != NULL && prot->twsk_prot->twsk_slab != NULL) {
 		const char *name = kmem_cache_name(prot->twsk_prot->twsk_slab);
 

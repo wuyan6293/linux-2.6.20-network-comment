@@ -20,7 +20,7 @@
  *		Alan Cox	:	Cleaned up, and sorted types.
  *		Pedro Roque	:	inet6 protocols
  */
- 
+
 #ifndef _PROTOCOL_H
 #define _PROTOCOL_H
 
@@ -31,19 +31,19 @@
 
 #define MAX_INET_PROTOS	256		/* Must be a power of 2		*/
 
-// ¸Ã½á¹¹¶¨ÒåÁËĞ­Òé×åÖĞÖ§³ÖµÄ´«Êä²ãĞ­ÒéÒÑ¾­´«Êä²ãµÄ±¨ÎÄ½ÓÊÕÀı³Ì£¬ÊÇÍøÂç²ãºÍ´«Êä²ãµÄÇÅÁº
+// è¯¥ç»“æ„å®šä¹‰äº†åè®®æ—ä¸­æ”¯æŒçš„ä¼ è¾“å±‚åè®®å·²ç»ä¼ è¾“å±‚çš„æŠ¥æ–‡æ¥æ”¶ä¾‹ç¨‹ï¼Œæ˜¯ç½‘ç»œå±‚å’Œä¼ è¾“å±‚çš„æ¡¥æ¢
 /* This is used to register protocols. */
 struct net_protocol {
-	int			(*handler)(struct sk_buff *skb);		// ´«Êä²ãÊı¾İ±¨ÎÄ½ÓÊÕ´¦Àíº¯ÊıÖ¸Õë  tcp_v4_rcv() udp_rcv() igmp_rcv()
-	void			(*err_handler)(struct sk_buff *skb, u32 info);	// ÔÚICMPÊÕµ½²î´í±¨ÎÄÖ®ºó£¬µ÷ÓÃµÄÉÏ²ã´íÎó´¦Àíº¯Êı tcp_v4_err() udp_err()
+	int			(*handler)(struct sk_buff *skb);		// ä¼ è¾“å±‚æ•°æ®æŠ¥æ–‡æ¥æ”¶å¤„ç†å‡½æ•°æŒ‡é’ˆ  tcp_v4_rcv() udp_rcv() igmp_rcv()
+	void			(*err_handler)(struct sk_buff *skb, u32 info);	// åœ¨ICMPæ”¶åˆ°å·®é”™æŠ¥æ–‡ä¹‹åï¼Œè°ƒç”¨çš„ä¸Šå±‚é”™è¯¯å¤„ç†å‡½æ•° tcp_v4_err() udp_err()
 	int			(*gso_send_check)(struct sk_buff *skb);
 	struct sk_buff	       *(*gso_segment)(struct sk_buff *skb,
 					       int features);
-	int			no_policy;								// ±êÊ¶ÔÚÂ·ÓÉÊ±ÊÇ·ñ½øĞĞ²ßÂÔÂ·ÓÉ
+	int			no_policy;								// æ ‡è¯†åœ¨è·¯ç”±æ—¶æ˜¯å¦è¿›è¡Œç­–ç•¥è·¯ç”±
 };
 
 #if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE)
-struct inet6_protocol 
+struct inet6_protocol
 {
 	int	(*handler)(struct sk_buff **skb);
 
@@ -67,25 +67,25 @@ struct inet6_protocol
 
 /* This is used to register socket interfaces for IP protocols.  */
 struct inet_protosw {
-	struct list_head list;	// ÓÃÓÚ½«typeÀàĞÍÏàÍ¬µÄinet_protosw½á¹¹×é³ÉÁ´±í
+	struct list_head list;	// ç”¨äºå°†typeç±»å‹ç›¸åŒçš„inet_protoswç»“æ„ç»„æˆé“¾è¡¨
 
         /* These two fields form the lookup key.  */
 	unsigned short	 type;	   /* This is the 2nd argument to socket(2). */ // SOCK_STREAM SOCK_DGRAM
 	unsigned short	 protocol; /* This is the L4 protocol number.  */		// IPPROTO_TCP IPPROTO_UDP
 
-	struct proto	 *prot;			// ´«Êä²ã½Ó¿Ú¡£TCP tcp_prot UDP udp_prot  RAW raw_prot
-	const struct proto_ops *ops;	// Ì×½Ó¿Ú²ã²Ù×÷¼¯¡£TCP inet_stream_ops UDP inet_dgram_ops RAW inet_sockraw_ops
-  
-	int              capability; /* Which (if any) capability do	µ±´óÓÚ0Ê±ºò£¬ĞèÒª¼ì²éµ±Ç°´´½¨Ì×½Ó¿Ú½ø³ÌÊÇ·ñÓĞÄÜÁ¦
-				      * we need to use this socket					TCP UDP ¾ùÎª-1£¬ RAWÎª CAP_NET_RAW
+	struct proto	 *prot;			// ä¼ è¾“å±‚æ¥å£ã€‚TCP tcp_prot UDP udp_prot  RAW raw_prot
+	const struct proto_ops *ops;	// å¥—æ¥å£å±‚æ“ä½œé›†ã€‚TCP inet_stream_ops UDP inet_dgram_ops RAW inet_sockraw_ops
+
+	int              capability; /* Which (if any) capability do	å½“å¤§äº0æ—¶å€™ï¼Œéœ€è¦æ£€æŸ¥å½“å‰åˆ›å»ºå¥—æ¥å£è¿›ç¨‹æ˜¯å¦æœ‰èƒ½åŠ›
+				      * we need to use this socket					TCP UDP å‡ä¸º-1ï¼Œ RAWä¸º CAP_NET_RAW
 				      * interface?
                                       */
-	char             no_check;   /* checksum on rcv/xmit/none? */	// TCP Ğ­ÒéÒ»¶¨Òª½øĞĞĞ£Ñé£¬Öµ¹Ì¶¨0£¬±êÊ¶ÒªĞ£Ñé¡£RAWºÍUDPÖµ¼û UDP_CSUM_NOXMIT
-	unsigned char	 flags;      /* See INET_PROTOSW_* below.  */	// ¸¨Öú±êÖ¾£¬ÓÃÓÚ³õÊ¼»¯´«Êä¿ØÖÆ¿éµÄis_icsk³ÉÔ±£¬¼ûÏÂÃæ
+	char             no_check;   /* checksum on rcv/xmit/none? */	// TCP åè®®ä¸€å®šè¦è¿›è¡Œæ ¡éªŒï¼Œå€¼å›ºå®š0ï¼Œæ ‡è¯†è¦æ ¡éªŒã€‚RAWå’ŒUDPå€¼è§ UDP_CSUM_NOXMIT
+	unsigned char	 flags;      /* See INET_PROTOSW_* below.  */	// è¾…åŠ©æ ‡å¿—ï¼Œç”¨äºåˆå§‹åŒ–ä¼ è¾“æ§åˆ¶å—çš„is_icskæˆå‘˜ï¼Œè§ä¸‹é¢
 };
-#define INET_PROTOSW_REUSE 0x01	     /* Are ports automatically reusable? */		// ±êÊ¶¶Ë¿ÚÊÇ·ñÄÜ±»ÖØÓÃ
-#define INET_PROTOSW_PERMANENT 0x02  /* Permanent protocols are unremovable. */		// ±êÊ¶´ËĞ­Òé²»ÄÜ±»Ìæ»»¡¢Ğ¶ÔØ
-#define INET_PROTOSW_ICSK      0x04  /* Is this an inet_connection_sock? */			// ±êÊ¶ÊÇ²»ÊÇÁ¬½ÓÀàĞÍµÄÌ×½Ó¿Ú
+#define INET_PROTOSW_REUSE 0x01	     /* Are ports automatically reusable? */		// æ ‡è¯†ç«¯å£æ˜¯å¦èƒ½è¢«é‡ç”¨
+#define INET_PROTOSW_PERMANENT 0x02  /* Permanent protocols are unremovable. */		// æ ‡è¯†æ­¤åè®®ä¸èƒ½è¢«æ›¿æ¢ã€å¸è½½
+#define INET_PROTOSW_ICSK      0x04  /* Is this an inet_connection_sock? */			// æ ‡è¯†æ˜¯ä¸æ˜¯è¿æ¥ç±»å‹çš„å¥—æ¥å£
 
 extern struct net_protocol *inet_protocol_base;
 extern struct net_protocol *inet_protos[MAX_INET_PROTOS];

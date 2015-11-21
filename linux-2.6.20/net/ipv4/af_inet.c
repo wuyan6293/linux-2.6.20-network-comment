@@ -233,16 +233,16 @@ static int inet_create(struct socket *sock, int protocol)
 	int try_loading_module = 0;
 	int err;
 
-	sock->state = SS_UNCONNECTED;		// ³õÊ¼»¯Ì×½Ó¿Ú×´Ì¬
+	sock->state = SS_UNCONNECTED;		// åˆå§‹åŒ–å¥—æ¥å£çŠ¶æ€
 
 	/* Look for the requested type/protocol pair. */
 	answer = NULL;
 lookup_protocol:
 	err = -ESOCKTNOSUPPORT;
 	rcu_read_lock();
-	list_for_each_rcu(p, &inetsw[sock->type]) {		// ÒÔÌ×½Ó¿ÚÀàĞÍ£¬±éÀúinetswÉ¢ÁĞ±í
-		answer = list_entry(p, struct inet_protosw, list);		// Í¨¹ıÆ«ÒÆ·½Ê½µÃµ½struct inet_protoswÖ¸Õë
-		// ÔÙ´Î¸ù¾İĞ­ÒéÀàĞÍprotocol£¬ÅĞ¶ÏÊÇ·ñÆ¥Åä£¬Æ¥ÅäÖĞÁË£¬Ôòbreak
+	list_for_each_rcu(p, &inetsw[sock->type]) {		// ä»¥å¥—æ¥å£ç±»å‹ï¼Œéå†inetswæ•£åˆ—è¡¨
+		answer = list_entry(p, struct inet_protosw, list);		// é€šè¿‡åç§»æ–¹å¼å¾—åˆ°struct inet_protoswæŒ‡é’ˆ
+		// å†æ¬¡æ ¹æ®åè®®ç±»å‹protocolï¼Œåˆ¤æ–­æ˜¯å¦åŒ¹é…ï¼ŒåŒ¹é…ä¸­äº†ï¼Œåˆ™break
 		/* Check the non-wild match. */
 		if (protocol == answer->protocol) {
 			if (protocol != IPPROTO_IP)
@@ -260,7 +260,7 @@ lookup_protocol:
 		answer = NULL;
 	}
 
-	if (unlikely(answer == NULL)) {		// Èç¹ûÎ´ÄÜÔÚinetswÖĞ»ñÈ¡Æ¥ÅäµÄinet_protosw½á¹¹ÊµÀı£¬ÔòĞèÒª¼ÓÔØÏàÓ¦µÄÄÚºËÄ£¿é
+	if (unlikely(answer == NULL)) {		// å¦‚æœæœªèƒ½åœ¨inetswä¸­è·å–åŒ¹é…çš„inet_protoswç»“æ„å®ä¾‹ï¼Œåˆ™éœ€è¦åŠ è½½ç›¸åº”çš„å†…æ ¸æ¨¡å—
 		if (try_loading_module < 2) {
 			rcu_read_unlock();
 			/*
@@ -277,17 +277,17 @@ lookup_protocol:
 			else
 				request_module("net-pf-%d-proto-%d",
 					       PF_INET, protocol);
-			goto lookup_protocol;		// ¼ÓÔØÍêÄÚºËÄ£¿éºó£¬ÔÙ´Î·µ»Øµ½lookup_protocol£¬²éÕÒ¶ÔÓ¦µÄproto
+			goto lookup_protocol;		// åŠ è½½å®Œå†…æ ¸æ¨¡å—åï¼Œå†æ¬¡è¿”å›åˆ°lookup_protocolï¼ŒæŸ¥æ‰¾å¯¹åº”çš„proto
 		} else
 			goto out_rcu_unlock;
 	}
 
 	err = -EPERM;
-	if (answer->capability > 0 && !capable(answer->capability))	// ¶Ô½øĞĞÄÜÁ¦×öÅĞ¶Ï£¬ÅĞ¶Ï¸Ã½ø³ÌÊÇ·ñÓĞÈ¨ÏŞ´´½¨¸ÃÌ×½Ó×Ö
+	if (answer->capability > 0 && !capable(answer->capability))	// å¯¹è¿›è¡Œèƒ½åŠ›åšåˆ¤æ–­ï¼Œåˆ¤æ–­è¯¥è¿›ç¨‹æ˜¯å¦æœ‰æƒé™åˆ›å»ºè¯¥å¥—æ¥å­—
 		goto out_rcu_unlock;
 
-	sock->ops = answer->ops;			// ÉèÖÃÌ×½Ó¿Ú²ãºÍ´«Êä²ãµÄ²Ù×÷½Ó¿Ú³ÉÔ± ops
-	answer_prot = answer->prot;			// ½«answerÖĞµÄ²¿·Ö²ÎÊıºóÈ¥³öÀ´£¬±£´æÔÚÁÙÊ±±äÁ¿ÖĞ£¬¹©ºóĞøÊ¹ÓÃ
+	sock->ops = answer->ops;			// è®¾ç½®å¥—æ¥å£å±‚å’Œä¼ è¾“å±‚çš„æ“ä½œæ¥å£æˆå‘˜ ops
+	answer_prot = answer->prot;			// å°†answerä¸­çš„éƒ¨åˆ†å‚æ•°åå»å‡ºæ¥ï¼Œä¿å­˜åœ¨ä¸´æ—¶å˜é‡ä¸­ï¼Œä¾›åç»­ä½¿ç”¨
 	answer_no_check = answer->no_check;
 	answer_flags = answer->flags;
 	rcu_read_unlock();
@@ -295,24 +295,24 @@ lookup_protocol:
 	BUG_TRAP(answer_prot->slab != NULL);
 
 	err = -ENOBUFS;
-	sk = sk_alloc(PF_INET, GFP_KERNEL, answer_prot, 1);	// ¸ù¾İĞ­Òé×åµÈ²ÎÊı£¬·ÖÅäÒ»¸ö´«Êä¿ØÖÆ¿é¡£½«inet_protosw½á¹¹ÖĞµÄprot³ÉÔ±×÷ÎªÈë¿Ú²ÎÊı´«µİ½øÈ¥
+	sk = sk_alloc(PF_INET, GFP_KERNEL, answer_prot, 1);	// æ ¹æ®åè®®æ—ç­‰å‚æ•°ï¼Œåˆ†é…ä¸€ä¸ªä¼ è¾“æ§åˆ¶å—ã€‚å°†inet_protoswç»“æ„ä¸­çš„protæˆå‘˜ä½œä¸ºå…¥å£å‚æ•°ä¼ é€’è¿›å»
 	if (sk == NULL)
 		goto out;
 
 	err = 0;
-	sk->sk_no_check = answer_no_check;			// ÉèÖÃÊÇ·ñĞèÒªĞ£ÑéµÄ±êÖ¾
+	sk->sk_no_check = answer_no_check;			// è®¾ç½®æ˜¯å¦éœ€è¦æ ¡éªŒçš„æ ‡å¿—
 	if (INET_PROTOSW_REUSE & answer_flags)
-		sk->sk_reuse = 1;						// ÉèÖÃÊÇ·ñ¿ÉÒÔ½øĞĞµØÖ·ÖØÓÃ
+		sk->sk_reuse = 1;						// è®¾ç½®æ˜¯å¦å¯ä»¥è¿›è¡Œåœ°å€é‡ç”¨
 
-	inet = inet_sk(sk);				// ÉèÖÃinet_sock¿éÖĞµÄis_icsk£¬±êÊ¶ÊÇ·ñÎªÃæÏòÁ¬½ÓµÄ´«Êä¿ØÖÆ¿é
-	inet->is_icsk = (INET_PROTOSW_ICSK & answer_flags) != 0;	
+	inet = inet_sk(sk);				// è®¾ç½®inet_sockå—ä¸­çš„is_icskï¼Œæ ‡è¯†æ˜¯å¦ä¸ºé¢å‘è¿æ¥çš„ä¼ è¾“æ§åˆ¶å—
+	inet->is_icsk = (INET_PROTOSW_ICSK & answer_flags) != 0;
 
 	if (SOCK_RAW == sock->type) {
-		inet->num = protocol;		// Èç¹ûÌ×½Ó¿ÚÀàĞÍÎªÔ­Ê¼Ì×½Ó¿Ú£¬ÔòÉèÖÃ±¾µØ¶Ë¿ÚÎªĞ­ÒéºÅ
+		inet->num = protocol;		// å¦‚æœå¥—æ¥å£ç±»å‹ä¸ºåŸå§‹å¥—æ¥å£ï¼Œåˆ™è®¾ç½®æœ¬åœ°ç«¯å£ä¸ºåè®®å·
 		if (IPPROTO_RAW == protocol)
-			inet->hdrincl = 1;		// ÉèÖÃinet_sock¿éÖĞµÄhdrincl£¬±êÊ¶ĞèÒª×Ô¼º¹¹½¨IPÊ×²¿
+			inet->hdrincl = 1;		// è®¾ç½®inet_sockå—ä¸­çš„hdrinclï¼Œæ ‡è¯†éœ€è¦è‡ªå·±æ„å»ºIPé¦–éƒ¨
 	}
-	// ¸ù¾İÏµÍ³²ÎÊıip_no_pmtu_disc£¬ÉèÖÃ´´½¨µÄ´«Êä¿ØÖÆ¿éÊÇ·ñÖ§³ÖPMTU
+	// æ ¹æ®ç³»ç»Ÿå‚æ•°ip_no_pmtu_discï¼Œè®¾ç½®åˆ›å»ºçš„ä¼ è¾“æ§åˆ¶å—æ˜¯å¦æ”¯æŒPMTU
 	if (ipv4_config.no_pmtu_disc)
 		inet->pmtudisc = IP_PMTUDISC_DONT;
 	else
@@ -320,34 +320,34 @@ lookup_protocol:
 
 	inet->id = 0;
 
-	sock_init_data(sock, sk);		// ¶Ô´«Êä¿ØÖÆ¿é½øĞĞ³õÊ¼»¯
+	sock_init_data(sock, sk);		// å¯¹ä¼ è¾“æ§åˆ¶å—è¿›è¡Œåˆå§‹åŒ–
 
 	sk->sk_destruct	   = inet_sock_destruct;
 	sk->sk_family	   = PF_INET;
 	sk->sk_protocol	   = protocol;
-	sk->sk_backlog_rcv = sk->sk_prot->backlog_rcv;		// ÉèÖÃºó±¸¶ÓÁĞ½ÓÊÕº¯Êı
+	sk->sk_backlog_rcv = sk->sk_prot->backlog_rcv;		// è®¾ç½®åå¤‡é˜Ÿåˆ—æ¥æ”¶å‡½æ•°
 
-	inet->uc_ttl	= -1;			// ÉèÖÃ´«Êä¿ØÖÆ¿éÖĞµ¥²¥TTL
-	inet->mc_loop	= 1;			// ÉèÖÃ´«Êä¿ØÖÆ¿éÖĞ×é²¥ÊÇ·ñ·¢Íù»ØÂ·±êÖ¾
-	inet->mc_ttl	= 1;			// ÉèÖÃ´«Êä¿ØÖÆ¿éÖĞ×é²¥µÄTTL
-	inet->mc_index	= 0;			// ÉèÖÃ´«Êä¿ØÖÆ¿éÖĞ×é²¥Ê¹ÓÃµÄ±¾µØÉè±¸µÄ½Ó¿ÚË÷Òı
-	inet->mc_list	= NULL;			// ³õÊ¼»¯´«Êä¿ØÖÆ¿é×é²¥×éÁĞ±í
+	inet->uc_ttl	= -1;			// è®¾ç½®ä¼ è¾“æ§åˆ¶å—ä¸­å•æ’­TTL
+	inet->mc_loop	= 1;			// è®¾ç½®ä¼ è¾“æ§åˆ¶å—ä¸­ç»„æ’­æ˜¯å¦å‘å¾€å›è·¯æ ‡å¿—
+	inet->mc_ttl	= 1;			// è®¾ç½®ä¼ è¾“æ§åˆ¶å—ä¸­ç»„æ’­çš„TTL
+	inet->mc_index	= 0;			// è®¾ç½®ä¼ è¾“æ§åˆ¶å—ä¸­ç»„æ’­ä½¿ç”¨çš„æœ¬åœ°è®¾å¤‡çš„æ¥å£ç´¢å¼•
+	inet->mc_list	= NULL;			// åˆå§‹åŒ–ä¼ è¾“æ§åˆ¶å—ç»„æ’­ç»„åˆ—è¡¨
 
 	sk_refcnt_debug_inc(sk);
 
-	if (inet->num) {		// Èç¹û´«Êä¿ØÖÆ¿éÖĞµÄnumÉèÖÃÁË±¾µØ¶Ë¿ÚºÅ
+	if (inet->num) {		// å¦‚æœä¼ è¾“æ§åˆ¶å—ä¸­çš„numè®¾ç½®äº†æœ¬åœ°ç«¯å£å·
 		/* It assumes that any protocol which allows
 		 * the user to assign a number at socket
 		 * creation time automatically
 		 * shares.
 		 */
-		inet->sport = htons(inet->num);		// ÉèÖÃ´«Êä¿ØÖÆ¿éÖĞµÄsportµÄÍøÂç×Ö½ÚĞò¸öÊıµÄ±¾µØ¶Ë¿ÚºÅ
+		inet->sport = htons(inet->num);		// è®¾ç½®ä¼ è¾“æ§åˆ¶å—ä¸­çš„sportçš„ç½‘ç»œå­—èŠ‚åºä¸ªæ•°çš„æœ¬åœ°ç«¯å£å·
 		/* Add to protocol hash chains. */
-		sk->sk_prot->hash(sk);				// µ÷ÓÃ´«Êä²ãµÄhashº¯Êı£¬½«´«Êä¿ØÖÆ¿é¼ÓÈëµ½¹ÜÀíµÄÉ¢ÁĞ±íÖĞ   TCP: tcp_v4_hash()  UDP: udp_lib_hash()
+		sk->sk_prot->hash(sk);				// è°ƒç”¨ä¼ è¾“å±‚çš„hashå‡½æ•°ï¼Œå°†ä¼ è¾“æ§åˆ¶å—åŠ å…¥åˆ°ç®¡ç†çš„æ•£åˆ—è¡¨ä¸­   TCP: tcp_v4_hash()  UDP: udp_lib_hash()
 	}
 
-	if (sk->sk_prot->init) {				// Èç¹ûinitÖ¸ÕëÒÑ¾­±»ÉèÖÃ¹ı
-		err = sk->sk_prot->init(sk);		// µ÷ÓÃinit()½øĞĞ¾ßÌåµÄ´«Êä¿ØÖÆ¿éµÄ³õÊ¼»¯¡£  tcp_v4_init_sock()
+	if (sk->sk_prot->init) {				// å¦‚æœinitæŒ‡é’ˆå·²ç»è¢«è®¾ç½®è¿‡
+		err = sk->sk_prot->init(sk);		// è°ƒç”¨init()è¿›è¡Œå…·ä½“çš„ä¼ è¾“æ§åˆ¶å—çš„åˆå§‹åŒ–ã€‚  tcp_v4_init_sock()
 		if (err)
 			sk_common_release(sk);
 	}
@@ -372,7 +372,7 @@ int inet_release(struct socket *sock)
 		long timeout;
 
 		/* Applications forget to leave groups before exiting */
-		ip_mc_drop_socket(sk);	// Àë¿ª¼ÓÈëµÄ×é²¥×é
+		ip_mc_drop_socket(sk);	// ç¦»å¼€åŠ å…¥çš„ç»„æ’­ç»„
 
 		/* If linger is set, we don't return until the close
 		 * is complete.  Otherwise we return immediately. The
@@ -382,11 +382,11 @@ int inet_release(struct socket *sock)
 		 * linger..
 		 */
 		timeout = 0;
-		if (sock_flag(sk, SOCK_LINGER) &&		// Èç¹ûÉèÖÃÁËSOCK_LINGER(ÈôÓĞÊı¾İÎ´·¢ËÍÍêÔòÑÓ³Ù¹Ø±Õ)
-		    !(current->flags & PF_EXITING))		// ²¢ÇÒµ±Ç°½ø³Ì²»ÔÚÍË³öµÄ¹ı³ÌÖĞ
-			timeout = sk->sk_lingertime;		// »ñÈ¡ÑÓÊ±¹Ø±ÕµÄÊ±¼ä
+		if (sock_flag(sk, SOCK_LINGER) &&		// å¦‚æœè®¾ç½®äº†SOCK_LINGER(è‹¥æœ‰æ•°æ®æœªå‘é€å®Œåˆ™å»¶è¿Ÿå…³é—­)
+		    !(current->flags & PF_EXITING))		// å¹¶ä¸”å½“å‰è¿›ç¨‹ä¸åœ¨é€€å‡ºçš„è¿‡ç¨‹ä¸­
+			timeout = sk->sk_lingertime;		// è·å–å»¶æ—¶å…³é—­çš„æ—¶é—´
 		sock->sk = NULL;
-		sk->sk_prot->close(sk, timeout);		// µ÷ÓÃ´«Êä²ãµÄclose½Ó¿Ú£¬Ê¹ÓÃÑÓÊ±¹Ø±ÕÊ±¼ä×÷Îª²ÎÊı
+		sk->sk_prot->close(sk, timeout);		// è°ƒç”¨ä¼ è¾“å±‚çš„closeæ¥å£ï¼Œä½¿ç”¨å»¶æ—¶å…³é—­æ—¶é—´ä½œä¸ºå‚æ•°
 	}
 	return 0;
 }
@@ -404,15 +404,15 @@ int inet_bind(struct socket *sock, struct sockaddr *uaddr, int addr_len)
 	int err;
 
 	/* If the socket has its own bind function then use it. (RAW) */
-	if (sk->sk_prot->bind) {		// Èç¹û¶ÔÓÚÌ×½Ó¿ÚÓĞ×Ô¼ºÌØÊâµÄbindº¯Êı£¬Ôòµ÷ÓÃ¡£ ±ÈÈç: RAW
+	if (sk->sk_prot->bind) {		// å¦‚æœå¯¹äºå¥—æ¥å£æœ‰è‡ªå·±ç‰¹æ®Šçš„bindå‡½æ•°ï¼Œåˆ™è°ƒç”¨ã€‚ æ¯”å¦‚: RAW
 		err = sk->sk_prot->bind(sk, uaddr, addr_len);
 		goto out;
 	}
 	err = -EINVAL;
-	if (addr_len < sizeof(struct sockaddr_in))		// µØÖ·²ÎÊıºÏ·¨ĞÔ¼ì²é
+	if (addr_len < sizeof(struct sockaddr_in))		// åœ°å€å‚æ•°åˆæ³•æ€§æ£€æŸ¥
 		goto out;
 
-	chk_addr_ret = inet_addr_type(addr->sin_addr.s_addr);	// µÃµ½µØÖ·µÄÀàĞÍ
+	chk_addr_ret = inet_addr_type(addr->sin_addr.s_addr);	// å¾—åˆ°åœ°å€çš„ç±»å‹
 
 	/* Not specified by any standard per-se, however it breaks too
 	 * many applications when removed.  It is unfortunate since
@@ -420,7 +420,7 @@ int inet_bind(struct socket *sock, struct sockaddr *uaddr, int addr_len)
 	 * several problems with systems using dynamic addressing.
 	 * (ie. your servers still start up even if your ISDN link
 	 *  is temporarily down)
-	 */		// ¸ù¾İÏµÍ³²ÎÊı½áºÏ»ñÈ¡µ½µÄµØÖ·ÀàĞÍ½øĞĞĞ£Ñé£¬ÒÔ±ã¾ö¶¨ÊÇ·ñ¿ÉÒÔ½øĞĞµØÖ·ºÍ¶Ë¿ÚµÄ°ó¶¨
+	 */		// æ ¹æ®ç³»ç»Ÿå‚æ•°ç»“åˆè·å–åˆ°çš„åœ°å€ç±»å‹è¿›è¡Œæ ¡éªŒï¼Œä»¥ä¾¿å†³å®šæ˜¯å¦å¯ä»¥è¿›è¡Œåœ°å€å’Œç«¯å£çš„ç»‘å®š
 	err = -EADDRNOTAVAIL;
 	if (!sysctl_ip_nonlocal_bind &&
 	    !inet->freebind &&
@@ -429,7 +429,7 @@ int inet_bind(struct socket *sock, struct sockaddr *uaddr, int addr_len)
 	    chk_addr_ret != RTN_MULTICAST &&
 	    chk_addr_ret != RTN_BROADCAST)
 		goto out;
-	// ¶Ô´ı°ó¶¨µÄ¶Ë¿Ú½øĞĞºÏ·¨ĞÔĞ£Ñé£¬²¢ÅĞ¶ÏÊÇ·ñÔÊĞí°ó¶¨Ğ¡ÓÚ1024µÄÌØÈ¨¶Ë¿Ú
+	// å¯¹å¾…ç»‘å®šçš„ç«¯å£è¿›è¡Œåˆæ³•æ€§æ ¡éªŒï¼Œå¹¶åˆ¤æ–­æ˜¯å¦å…è®¸ç»‘å®šå°äº1024çš„ç‰¹æƒç«¯å£
 	snum = ntohs(addr->sin_port);
 	err = -EACCES;
 	if (snum && snum < PROT_SOCK && !capable(CAP_NET_BIND_SERVICE))
@@ -448,11 +448,11 @@ int inet_bind(struct socket *sock, struct sockaddr *uaddr, int addr_len)
 	err = -EINVAL;
 	if (sk->sk_state != TCP_CLOSE || inet->num)
 		goto out_release_sock;
-	// inet_sock´«Êä¿ØÖÆ¿éÖĞÓĞÁ½¸öµØÖ·£¬rcv_saddrºÍsaddr¡£
+	// inet_sockä¼ è¾“æ§åˆ¶å—ä¸­æœ‰ä¸¤ä¸ªåœ°å€ï¼Œrcv_saddrå’Œsaddrã€‚
 	inet->rcv_saddr = inet->saddr = addr->sin_addr.s_addr;
-	if (chk_addr_ret == RTN_MULTICAST || chk_addr_ret == RTN_BROADCAST)		// µ±bindµÄÊÇÒ»¸ö×é²¥¡¢¹ã²¥µØÖ·Ê±£¬ÎÒÃÇ½«saddrĞŞ¸ÄÎª0.ÒòÎª×é²¥ºÍ¹ã²¥µØÖ·²»ÄÜ×÷ÎªÔ´µØÖ·
+	if (chk_addr_ret == RTN_MULTICAST || chk_addr_ret == RTN_BROADCAST)		// å½“bindçš„æ˜¯ä¸€ä¸ªç»„æ’­ã€å¹¿æ’­åœ°å€æ—¶ï¼Œæˆ‘ä»¬å°†saddrä¿®æ”¹ä¸º0.å› ä¸ºç»„æ’­å’Œå¹¿æ’­åœ°å€ä¸èƒ½ä½œä¸ºæºåœ°å€
 		inet->saddr = 0;  /* Use device */
-	// µ÷ÓÃ´«Êä²ãÉÏµÄget_port()º¯Êı½øĞĞµØÖ·°ó¶¨£¬ÅĞ¶ÏÊÇ·ñ³É¹¦
+	// è°ƒç”¨ä¼ è¾“å±‚ä¸Šçš„get_port()å‡½æ•°è¿›è¡Œåœ°å€ç»‘å®šï¼Œåˆ¤æ–­æ˜¯å¦æˆåŠŸ
 	/* Make sure we are allowed to bind here. */
 	if (sk->sk_prot->get_port(sk, snum)) {
 		inet->saddr = inet->rcv_saddr = 0;
@@ -461,13 +461,13 @@ int inet_bind(struct socket *sock, struct sockaddr *uaddr, int addr_len)
 	}
 
 	if (inet->rcv_saddr)
-		sk->sk_userlocks |= SOCK_BINDADDR_LOCK;		// ±êÊ¶´«Êä¿ØÖÆ¿éÒÑ¾­°ó¶¨ÁË±¾µØµØÖ·ºÍ±¾µØ¶Ë¿Ú
+		sk->sk_userlocks |= SOCK_BINDADDR_LOCK;		// æ ‡è¯†ä¼ è¾“æ§åˆ¶å—å·²ç»ç»‘å®šäº†æœ¬åœ°åœ°å€å’Œæœ¬åœ°ç«¯å£
 	if (snum)
 		sk->sk_userlocks |= SOCK_BINDPORT_LOCK;
-	inet->sport = htons(inet->num);					// ÉèÖÃ±¾µØ¶Ë¿Ú£¬ÍøÂç×Ö½ÚĞò
-	inet->daddr = 0;								// ÉèÖÃÄ¿µÄµØÖ·ºÍÄ¿µÄ¶Ë¿Ú
+	inet->sport = htons(inet->num);					// è®¾ç½®æœ¬åœ°ç«¯å£ï¼Œç½‘ç»œå­—èŠ‚åº
+	inet->daddr = 0;								// è®¾ç½®ç›®çš„åœ°å€å’Œç›®çš„ç«¯å£
 	inet->dport = 0;
-	sk_dst_reset(sk);								// Çå³ş´Ë´«Êä¿ØÖÆ¿éµÄÂ·ÓÉ»º´æÏî
+	sk_dst_reset(sk);								// æ¸…æ¥šæ­¤ä¼ è¾“æ§åˆ¶å—çš„è·¯ç”±ç¼“å­˜é¡¹
 	err = 0;
 out_release_sock:
 	release_sock(sk);
@@ -635,15 +635,15 @@ int inet_getname(struct socket *sock, struct sockaddr *uaddr,
 	struct inet_sock *inet	= inet_sk(sk);
 	struct sockaddr_in *sin	= (struct sockaddr_in *)uaddr;
 
-	sin->sin_family = AF_INET;		// ·µ»ØµØÖ·ÀàĞÍÎªIPv4µØÖ·
-	if (peer) {						// »ñÈ¡¶Ô¶ËµØÖ·ºÍ¶Ë¿Ú
-		if (!inet->dport ||			// µ±´«Êä¿ØÖÆ¿é´¦ÓÚÎ´Á¬½Ó×´Ì¬Ê±ºò£¬»ñÈ¡²»µ½¶Ô¶ËµØÖ·
+	sin->sin_family = AF_INET;		// è¿”å›åœ°å€ç±»å‹ä¸ºIPv4åœ°å€
+	if (peer) {						// è·å–å¯¹ç«¯åœ°å€å’Œç«¯å£
+		if (!inet->dport ||			// å½“ä¼ è¾“æ§åˆ¶å—å¤„äºæœªè¿æ¥çŠ¶æ€æ—¶å€™ï¼Œè·å–ä¸åˆ°å¯¹ç«¯åœ°å€
 		    (((1 << sk->sk_state) & (TCPF_CLOSE | TCPF_SYN_SENT)) &&
 		     peer == 1))
 			return -ENOTCONN;
-		sin->sin_port = inet->dport;			// ¶Ô¶ËµÄ¶Ë¿Ú
-		sin->sin_addr.s_addr = inet->daddr;		// ¶Ô¶ËµÄµØÖ·
-	} else {						// »ñÈ¡±¾µØµØÖ·ºÍ¶Ë¿Ú
+		sin->sin_port = inet->dport;			// å¯¹ç«¯çš„ç«¯å£
+		sin->sin_addr.s_addr = inet->daddr;		// å¯¹ç«¯çš„åœ°å€
+	} else {						// è·å–æœ¬åœ°åœ°å€å’Œç«¯å£
 		__be32 addr = inet->rcv_saddr;
 		if (!addr)
 			addr = inet->saddr;
@@ -651,7 +651,7 @@ int inet_getname(struct socket *sock, struct sockaddr *uaddr,
 		sin->sin_addr.s_addr = addr;
 	}
 	memset(sin->sin_zero, 0, sizeof(sin->sin_zero));
-	*uaddr_len = sizeof(*sin);		// ·µ»ØµØÖ·ĞÅÏ¢³¤¶È
+	*uaddr_len = sizeof(*sin);		// è¿”å›åœ°å€ä¿¡æ¯é•¿åº¦
 	return 0;
 }
 
@@ -752,17 +752,17 @@ int inet_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
 	int err = 0;
 
 	switch (cmd) {
-		case SIOCGSTAMP:		// »ñÈ¡·Ö×éµÄÊ±¼ä´Á
+		case SIOCGSTAMP:		// è·å–åˆ†ç»„çš„æ—¶é—´æˆ³
 			err = sock_get_timestamp(sk, (struct timeval __user *)arg);
 			break;
 		case SIOCADDRT:
 		case SIOCDELRT:
-		case SIOCRTMSG:			// ´¦ÀíÌí¼ÓºÍÉ¾³ıÂ·ÓÉµÈ²Ù×÷
+		case SIOCRTMSG:			// å¤„ç†æ·»åŠ å’Œåˆ é™¤è·¯ç”±ç­‰æ“ä½œ
 			err = ip_rt_ioctl(cmd, (void __user *)arg);
 			break;
 		case SIOCDARP:
 		case SIOCGARP:
-		case SIOCSARP:			// ´´½¨¡¢ĞŞ¸Ä¡¢»ñÈ¡ºÍÉ¾³ıARP±íÏî²Ù×÷
+		case SIOCSARP:			// åˆ›å»ºã€ä¿®æ”¹ã€è·å–å’Œåˆ é™¤ARPè¡¨é¡¹æ“ä½œ
 			err = arp_ioctl(cmd, (void __user *)arg);
 			break;
 		case SIOCGIFADDR:
@@ -775,12 +775,12 @@ int inet_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
 		case SIOCSIFDSTADDR:
 		case SIOCSIFPFLAGS:
 		case SIOCGIFPFLAGS:
-		case SIOCSIFFLAGS:		// ½Ó¿Ú²Ù×÷
+		case SIOCSIFFLAGS:		// æ¥å£æ“ä½œ
 			err = devinet_ioctl(cmd, (void __user *)arg);
 			break;
 		default:
 			if (sk->sk_prot->ioctl)
-				err = sk->sk_prot->ioctl(sk, cmd, arg);	// ÆäËûÇé¿ö£¬µ÷ÓÃ´«Êä²ãµÄº¯Êı
+				err = sk->sk_prot->ioctl(sk, cmd, arg);	// å…¶ä»–æƒ…å†µï¼Œè°ƒç”¨ä¼ è¾“å±‚çš„å‡½æ•°
 			else
 				err = -ENOIOCTLCMD;
 			break;
@@ -883,10 +883,10 @@ static struct inet_protosw inetsw_array[] =
                 .protocol =   IPPROTO_TCP,
                 .prot =       &tcp_prot,
                 .ops =        &inet_stream_ops,
-                .capability = -1,							// ´´½¨SOCK_STREAMÌ×½Ó¿ÚÎŞĞèÄÜÁ¦¼ìÑé
-                .no_check =   0,							// Ê¼ÖÕĞèÒª½øĞĞĞ£ÑéºÍ²Ù×÷
-                .flags =      INET_PROTOSW_PERMANENT |		// ±êÊ¶TCPÄ£¿éÔÚÏµÍ³ÔËĞĞ¹ı³ÌÖĞ²»ÄÜ±»Ìæ»»»òĞ¶ÔØ
-			      INET_PROTOSW_ICSK,						// ±êÊ¶TCPÌ×½Ó¿ÚÎªÃæÏòÁ¬½ÓµÄÌ×½Ó¿Ú
+                .capability = -1,							// åˆ›å»ºSOCK_STREAMå¥—æ¥å£æ— éœ€èƒ½åŠ›æ£€éªŒ
+                .no_check =   0,							// å§‹ç»ˆéœ€è¦è¿›è¡Œæ ¡éªŒå’Œæ“ä½œ
+                .flags =      INET_PROTOSW_PERMANENT |		// æ ‡è¯†TCPæ¨¡å—åœ¨ç³»ç»Ÿè¿è¡Œè¿‡ç¨‹ä¸­ä¸èƒ½è¢«æ›¿æ¢æˆ–å¸è½½
+			      INET_PROTOSW_ICSK,						// æ ‡è¯†TCPå¥—æ¥å£ä¸ºé¢å‘è¿æ¥çš„å¥—æ¥å£
         },
 
         {
@@ -898,7 +898,7 @@ static struct inet_protosw inetsw_array[] =
                 .no_check =   UDP_CSUM_DEFAULT,
                 .flags =      INET_PROTOSW_PERMANENT,
        },
-        
+
 
        {
                .type =       SOCK_RAW,
@@ -912,7 +912,7 @@ static struct inet_protosw inetsw_array[] =
 };
 
 #define INETSW_ARRAY_LEN (sizeof(inetsw_array) / sizeof(struct inet_protosw))
-// ½«inet_protoswÊµÀı×¢²áµ½inetsw¹şÏ£±íÖĞ
+// å°†inet_protoswå®ä¾‹æ³¨å†Œåˆ°inetswå“ˆå¸Œè¡¨ä¸­
 void inet_register_protosw(struct inet_protosw *p)
 {
 	struct list_head *lh;
@@ -946,7 +946,7 @@ void inet_register_protosw(struct inet_protosw *p)
 	/* Add the new entry after the last permanent entry if any, so that
 	 * the new entry does not override a permanent entry when matched with
 	 * a wild-card protocol. But it is allowed to override any existing
-	 * non-permanent entry.  This means that when we remove this entry, the 
+	 * non-permanent entry.  This means that when we remove this entry, the
 	 * system automatically returns to the old behavior.
 	 */
 	list_add_rcu(&p->list, last_perm);
@@ -968,7 +968,7 @@ out_illegal:
 	       p->type);
 	goto out;
 }
-// ½«ÖÆ¶¨µÄinet_protoswÊµÀı´Óinetsw¹şÏ£±íÖĞ×¢Ïú  INET_PROTOSW_PERMANENTµÄÊµÀı²»ÄÜ×¢Ïú
+// å°†åˆ¶å®šçš„inet_protoswå®ä¾‹ä»inetswå“ˆå¸Œè¡¨ä¸­æ³¨é”€  INET_PROTOSW_PERMANENTçš„å®ä¾‹ä¸èƒ½æ³¨é”€
 void inet_unregister_protosw(struct inet_protosw *p)
 {
 	if (INET_PROTOSW_PERMANENT & p->flags) {
@@ -1073,7 +1073,7 @@ int inet_sk_rebuild_header(struct sock *sk)
 			},
 		},
 	};
-						
+
 	security_sk_classify_flow(sk, &fl);
 	err = ip_route_output_flow(&rt, &fl, sk, 0);
 }
@@ -1246,7 +1246,7 @@ static int ipv4_proc_init(void);
 
 static struct packet_type ip_packet_type = {
 	.type = __constant_htons(ETH_P_IP),
-	.func = ip_rcv,							// IPÊı¾İ°ü½ÓÊÕº¯Êı
+	.func = ip_rcv,							// IPæ•°æ®åŒ…æ¥æ”¶å‡½æ•°
 	.gso_send_check = inet_gso_send_check,
 	.gso_segment = inet_gso_segment,
 };
@@ -1273,7 +1273,7 @@ static int __init inet_init(void)
 		goto out_unregister_udp_proto;
 
 	/*
-	 *	Tell SOCKET that we are alive... 
+	 *	Tell SOCKET that we are alive...
 	 */
 
   	(void)sock_register(&inet_family_ops);
@@ -1334,11 +1334,11 @@ static int __init inet_init(void)
 #endif
 	/*
 	 *	Initialise per-cpu ipv4 mibs
-	 */ 
+	 */
 
 	if(init_ipv4_mibs())
 		printk(KERN_CRIT "inet_init: Cannot init ipv4 mibs\n"); ;
-	
+
 	ipv4_proc_init();
 
 	ipfrag_init();
