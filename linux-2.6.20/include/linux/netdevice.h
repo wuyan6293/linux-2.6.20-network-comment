@@ -316,7 +316,7 @@ struct net_device
 #define NETIF_F_NO_CSUM		4	/* Does not require checksum. F.e. loopack. */	// 不需要计算校验和
 #define NETIF_F_HW_CSUM		8	/* Can checksum all the packets. */				// 由硬件计算校验和
 #define NETIF_F_HIGHDMA		32	/* Can DMA to high memory. */		// 支持在高端内存中使用DMA
-#define NETIF_F_FRAGLIST	64	/* Scatter/gather IO. */	// 支持FRAGLIST类型的聚合分散I/O
+#define NETIF_F_FRAGLIST	64	/* Scatter/gather IO. */	// 支持FRAGLIST类型的聚合分散I/O  2.6内核只有loopback支持
 #define NETIF_F_HW_VLAN_TX	128	/* Transmit VLAN hw acceleration */
 #define NETIF_F_HW_VLAN_RX	256	/* Receive VLAN hw acceleration */
 #define NETIF_F_HW_VLAN_FILTER	512	/* Receive filtering on VLAN */

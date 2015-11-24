@@ -31,10 +31,10 @@
 #define HAVE_ALLOC_SKB		/* For the drivers to know */
 #define HAVE_ALIGNABLE_SKB	/* Ditto 8)		   */
 
-#define CHECKSUM_NONE 0
-#define CHECKSUM_PARTIAL 1
-#define CHECKSUM_UNNECESSARY 2
-#define CHECKSUM_COMPLETE 3
+#define CHECKSUM_NONE 0                 // 硬件不支持，完全由软件来做校验和
+#define CHECKSUM_PARTIAL 10             // 硬件来执行校验和
+#define CHECKSUM_UNNECESSARY 20         // 无需执行校验和
+#define CHECKSUM_COMPLETE 3             // 已执行完校验和
 
 #define SKB_DATA_ALIGN(X)	(((X) + (SMP_CACHE_BYTES - 1)) & \
 				 ~(SMP_CACHE_BYTES - 1))
@@ -151,7 +151,7 @@ struct skb_shared_info {
 	__be32          ip6_frag_id;
 	/*
 		1) 用于接收分片组后链接多个分片，组成一个完整的IP数据报
-		2) UDP数据包输出中，将待分片的SKB链接懂啊第一个SKB中
+		2) UDP数据包输出中，将待分片的SKB链接到第一个SKB中，然后在输出过程中能够快速分片
 		3) 用于FRAGLIST类型的聚合分散I/O
 	*/
 	struct sk_buff	*frag_list;
@@ -183,17 +183,17 @@ struct skb_timeval {
 
 
 enum {
-	SKB_FCLONE_UNAVAILABLE,
-	SKB_FCLONE_ORIG,
-	SKB_FCLONE_CLONE,
+	SKB_FCLONE_UNAVAILABLE,         // 未被克隆
+	SKB_FCLONE_ORIG,                // 父SKB 可以被克隆
+	SKB_FCLONE_CLONE,               // 子SKB，从父SKB克隆得到
 };
 
 enum {
-	SKB_GSO_TCPV4 = 1 << 0,
-	SKB_GSO_UDP = 1 << 1,
+	SKB_GSO_TCPV4 = 1 << 0,         // TCP段卸载
+	SKB_GSO_UDP = 1 << 1,           // UDP分片卸载
 
 	/* This indicates the skb is from an untrusted source. */
-	SKB_GSO_DODGY = 1 << 2,
+	SKB_GSO_DODGY = 1 << 2,         // 表明数据包是从不可信赖的数据源发出
 
 	/* This indicates the tcp segment has CWR set. */
 	SKB_GSO_TCP_ECN = 1 << 3,
@@ -302,7 +302,7 @@ struct sk_buff {
 	 * want to keep them across layers you have to do a skb_clone()
 	 * first. This is owned by whoever has the skb queued ATM.
 	 */
-	// SKB信息控制块，每层协议的私有信息存储空间，由每一层协议自己维护使用，本层有效
+	// SKB信息控制块，每层协议的私有信息存储空间，由每一层协议自己维护使用，本层有效    tcp_skb_cb  udp_skb_cb
 	char			cb[48];
 
 	// SKB中数据部分的长度  线性缓冲区长度 + SG聚合分散I/O数据长度 + FRAGLIST 聚合分散I/O数据长度
@@ -317,9 +317,9 @@ struct sk_buff {
 		__u32		csum_offset;		// ip_summed == CHECKSUM_PARTIAL时，用于记录传输层首部中校验和字段的偏移
 	};
 	__u32			priority;			// QoS类别
-	__u8			local_df:1,			// 表示此SKB在本地允许分片
+	__u8			local_df:1,			// 表示此SKB在本地允许分片 data fragment
 				cloned:1,				// SKB是否已克隆
-				ip_summed:2,			// 传输层校验和状态标志位 见:  CHECKSUM_NONE
+				ip_summed:2,			// 传输层校验和状态标志位 见:  CHECKSUM_NONE   summed: 总计
 				nohdr:1,				// 标识payload是否是被单独引用的，不存在协议首部
 				nfctinfo:3;
 	// 帧类型，分类是由二层目的地址决定
