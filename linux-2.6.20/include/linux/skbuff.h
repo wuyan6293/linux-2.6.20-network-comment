@@ -131,17 +131,17 @@ struct skb_frag_struct {
 /* This data is invariant across clones and lives at
  * the end of the header data, ie. at skb->end.
  */
-/* 
+/*
 	在数据缓存区的末尾，end指针指向的地址之后。
 	sk_buff结构中，没有指向skb_shared_info结构的指针，通过skb_shinfo宏来访问
-	
+
 	frag_list,nr_frags,frags和IP分片的存储相关，支持聚合分散I/O
-	
+
 */
 struct skb_shared_info {
 	atomic_t	dataref;				// 引用计数。在一个info缓存区被多个SKB引用时候，使用该字段
 	unsigned short	nr_frags;			// frags数组中的项数
-	/*  
+	/*
 		一下三个gso_ 变量和GSO的特性相关
 	*/
 	unsigned short	gso_size;			// 生成GSO段时候的MSS，GSO段长度是MSS的整数倍
@@ -158,7 +158,7 @@ struct skb_shared_info {
 
 	/*
 		nr_frags和frags用于支持SG类型的聚合分散I/O缓存区。
-	*/   
+	*/
 	skb_frag_t	frags[MAX_SKB_FRAGS];
 };
 
@@ -201,7 +201,7 @@ enum {
 	SKB_GSO_TCPV6 = 1 << 4,
 };
 
-/** 
+/**
  *	struct sk_buff - socket buffer
  *	@next: Next buffer in list
  *	@prev: Previous buffer in list
@@ -228,7 +228,7 @@ enum {
  *	@priority: Packet queueing priority
  *	@users: User count - see {datagram,tcp}.c
  *	@protocol: Packet protocol from driver
- *	@truesize: Buffer size 
+ *	@truesize: Buffer size
  *	@head: Head of buffer
  *	@data: Data head pointer
  *	@tail: Tail pointer
@@ -259,11 +259,11 @@ struct sk_buff {
 	// next 和 prev 构成SKB的双向循环链表结构。 整个链表由sk_buff_head作为头来使用
 	struct sk_buff		*next;
 	struct sk_buff		*prev;
-	
-	struct sock		*sk;					// 宿主传输控制块
+
+	struct sock		*sk;					// 宿主传输控制块, 当报文紧紧是在二、三层转发时，sk == NULL
 	// 接收/发送 时间戳
 	// 通常在收到数据包时候，通过netif_rx()调用net_timestamp()进行设置
-	struct skb_timeval	tstamp;				
+	struct skb_timeval	tstamp;
 	// 网络设备指针
 	struct net_device	*dev;
 	// 接收报文的原始网络设备。如果包是本地生成，则为NULL
@@ -278,7 +278,7 @@ struct sk_buff {
 		struct iphdr	*ipiph;
 		struct ipv6hdr	*ipv6h;
 		unsigned char	*raw;
-	} h;	
+	} h;
 
 	// 指向三层协议首部
 	union {
@@ -316,20 +316,20 @@ struct sk_buff {
 		__wsum		csum;				// ip_summed == CHECKSUM_NONE时，用于存放负载数据报的数据部分的校验和
 		__u32		csum_offset;		// ip_summed == CHECKSUM_PARTIAL时，用于记录传输层首部中校验和字段的偏移
 	};
-	__u32			priority;			// QoS类别 
+	__u32			priority;			// QoS类别
 	__u8			local_df:1,			// 表示此SKB在本地允许分片
 				cloned:1,				// SKB是否已克隆
-				ip_summed:2,			// 传输层校验和状态标志位 见:  CHECKSUM_NONE		
+				ip_summed:2,			// 传输层校验和状态标志位 见:  CHECKSUM_NONE
 				nohdr:1,				// 标识payload是否是被单独引用的，不存在协议首部
 				nfctinfo:3;
 	// 帧类型，分类是由二层目的地址决定
 	// 见: if_packet.h PACKET_HOST
-	__u8			pkt_type:3,			
+	__u8			pkt_type:3,
 				fclone:2,				// 当前克隆状态。见: SKB_FCLONE_UNAVAILABLE
 				ipvs_property:1;
 	// 从二层设备角度看到的上层协议类型
 	// 见: if_ether.h　ETH_P_IP
-	__be16			protocol;			
+	__be16			protocol;
 
 	// SKB析构函数指针
 	// 如果SKB没有宿主传输控制块，则该函数指针通常为空
@@ -361,16 +361,16 @@ struct sk_buff {
 
 	/* These elements must be at the end, see alloc_skb() for details.  */
 	// 整个skb结构的总大小。 包括SKB描述符和数据缓存区部分。   len+sizeof(sk_buff)
-	unsigned int		truesize;			
+	unsigned int		truesize;
 	atomic_t		users;					// 引用计数, 只保护SKB描述符，数据部分有自己的引用计数
 	// 一下4个变量用来指向线性数据缓存区及数据部分的边界
 	// head和end指向缓存区的头尾
 	// data和tail指向数据的头尾
 	/*
 			------------------------------------------------------------------------
-			|			|							|				| skb_shared_info	
+			|			|							|				| skb_shared_info
 			|			|							|				|
-		   head		   data						   tail     	   end	
+		   head		   data						   tail     	   end
 	*/
 	unsigned char		*head,
 				*data,
@@ -1039,7 +1039,7 @@ static inline void skb_reserve(struct sk_buff *skb, int len)
  * The downside to this alignment of the IP header is that the DMA is now
  * unaligned. On some architectures the cost of an unaligned DMA is high
  * and this cost outweighs the gains made by aligning the IP header.
- * 
+ *
  * Since this trade off varies between architectures, we allow NET_IP_ALIGN
  * to be overridden.
  */
@@ -1252,7 +1252,7 @@ static inline int skb_cow(struct sk_buff *skb, unsigned int headroom)
  *	is untouched. Otherwise it is extended. Returns zero on
  *	success. The skb is freed on error.
  */
- 
+
 static inline int skb_padto(struct sk_buff *skb, unsigned int len)
 {
 	unsigned int size = skb->len;

@@ -118,7 +118,7 @@ struct sock_common {
 	struct hlist_node	skc_bind_node;		// 已绑定端口的传输控制块利用该字段插入到与之绑定端口信息结构为头节点的链表中
 	atomic_t		skc_refcnt;				// 引用计数
 	unsigned int		skc_hash;			// 存储 TCP状态为established时加入到散列表的关键字键值
-	struct proto		*skc_prot;			// 指向网络接口层的指针
+	struct proto		*skc_prot;			// 指向网络接口层的指针 TCP tcp_prot UDP udp_prot  RAW raw_prot
 };
 
 /**

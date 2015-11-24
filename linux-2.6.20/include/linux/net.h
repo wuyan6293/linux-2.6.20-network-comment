@@ -115,7 +115,7 @@ struct socket {
 		UDP: inet_dgram_ops
 		RAW: inet_sockraw_ops
 	*/
-	const struct proto_ops	*ops;			// 套接口操作结合，从协议无关转换为协议相关
+	const struct proto_ops	*ops;			// 套接口操作结合，从协议无关转换为协议相关 inet_stream_ops inet_dgram_ops inet_sockraw_ops
 	struct fasync_struct	*fasync_list;	// 异步通知队列
 	struct file		*file;		// 与套接口相关联的file结构的指针。
 	/*
@@ -125,7 +125,7 @@ struct socket {
 					   ->udp_sock
 					   ->raw_sock
 	*/
-	struct sock		*sk;		// 与套接口相关联的传输控制块
+	struct sock		*sk;		// 与套接口相关联的传输控制块 tcp_sock udp_sock raw_sock
 	wait_queue_head_t	wait;	// 等待套接口的进程队列
 	short			type;		// 套接口类型  sock_type 例如: SOCK_STREAM
 };
@@ -198,7 +198,7 @@ extern int	     sock_create(int family, int type, int proto,
 extern int	     sock_create_kern(int family, int type, int proto,
 				      struct socket **res);
 extern int	     sock_create_lite(int family, int type, int proto,
-				      struct socket **res); 
+				      struct socket **res);
 extern void	     sock_release(struct socket *sock);
 extern int   	     sock_sendmsg(struct socket *sock, struct msghdr *msg,
 				  size_t len);
