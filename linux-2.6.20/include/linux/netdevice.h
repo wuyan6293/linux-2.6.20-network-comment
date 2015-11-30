@@ -239,7 +239,7 @@ enum netdev_state_t
 {
 	__LINK_STATE_XOFF=0,// 由于热插拔网络设备、缓存不够、网络设备硬件错误、关闭禁止硬件，从而关闭排队功能
 	__LINK_STATE_START,	// 网络设备处于激活状态
-	__LINK_STATE_PRESENT,//
+	__LINK_STATE_PRESENT,// 待机前的设备状态
 	__LINK_STATE_SCHED,		// 标识网络驱动的数据发送是否在流量控制的调度中
 	__LINK_STATE_NOCARRIER,	// 标识网络设备处理是否可传递状态
 	__LINK_STATE_RX_SCHED,	// 标识正在轮询接收数据包
@@ -287,18 +287,18 @@ struct net_device
 	 *	I/O specific fields
 	 *	FIXME: Merge these and struct ifmap into one
 	 */
-	unsigned long		mem_end;	/* shared mem end	*/
+	unsigned long		mem_end;	/* shared mem end	*/ // 网络设备共享内存的起始地址和结束地址
 	unsigned long		mem_start;	/* shared mem start	*/
-	unsigned long		base_addr;	/* device I/O address	*/
-	unsigned int		irq;		/* device IRQ number	*/
+	unsigned long		base_addr;	/* device I/O address	*/ // 网络接口I/O基地址
+	unsigned int		irq;		/* device IRQ number	*/ // 分配给设备的中断号
 
 	/*
 	 *	Some hardware also needs these fields, but they are not
 	 *	part of the usual set specified in Space.c.
 	 */
 
-	unsigned char		if_port;	/* Selectable AUI, TP,..*/
-	unsigned char		dma;		/* DMA channel		*/
+	unsigned char		if_port;	/* Selectable AUI, TP,..*/ // 指定在多端口设备上使用哪个端口,现在较少使用
+	unsigned char		dma;		/* DMA channel		*/ // 为设备分配的DMA通道
 
 	unsigned long		state;		// 状态标志和QoS排队规则状态  见:  netdev_state_t
 	// 指向下一个net_device结构的指针，设备中所有的net_device组成一个链表
@@ -317,11 +317,11 @@ struct net_device
 #define NETIF_F_HW_CSUM		8	/* Can checksum all the packets. */				// 由硬件计算校验和
 #define NETIF_F_HIGHDMA		32	/* Can DMA to high memory. */		// 支持在高端内存中使用DMA
 #define NETIF_F_FRAGLIST	64	/* Scatter/gather IO. */	// 支持FRAGLIST类型的聚合分散I/O  2.6内核只有loopback支持
-#define NETIF_F_HW_VLAN_TX	128	/* Transmit VLAN hw acceleration */
+#define NETIF_F_HW_VLAN_TX	128	/* Transmit VLAN hw acceleration */  // 支持802.1q vlan硬件加速
 #define NETIF_F_HW_VLAN_RX	256	/* Receive VLAN hw acceleration */
 #define NETIF_F_HW_VLAN_FILTER	512	/* Receive filtering on VLAN */
 #define NETIF_F_VLAN_CHALLENGED	1024	/* Device cannot handle VLAN packets */
-#define NETIF_F_GSO		2048	/* Enable software GSO. */	// 标识设备致辞某种GSO
+#define NETIF_F_GSO		2048	/* Enable software GSO. */	// 标识设备支持某种GSO
 #define NETIF_F_LLTX		4096	/* LockLess TX */		// 标识网络报文输出时候，是否需要拿锁
 
 	/* Segmentation offload features */
@@ -329,7 +329,7 @@ struct net_device
 #define NETIF_F_GSO_MASK	0xffff0000
 #define NETIF_F_TSO		(SKB_GSO_TCPV4 << NETIF_F_GSO_SHIFT)		// 标识设备支持TCP段卸载
 #define NETIF_F_UFO		(SKB_GSO_UDP << NETIF_F_GSO_SHIFT)			// 支持UDP分片卸载
-#define NETIF_F_GSO_ROBUST	(SKB_GSO_DODGY << NETIF_F_GSO_SHIFT)	//
+#define NETIF_F_GSO_ROBUST	(SKB_GSO_DODGY << NETIF_F_GSO_SHIFT)	// 标识设备支持对从一个不可信赖的来源发出的数据报进行段卸载
 #define NETIF_F_TSO_ECN		(SKB_GSO_TCP_ECN << NETIF_F_GSO_SHIFT)
 #define NETIF_F_TSO6		(SKB_GSO_TCPV6 << NETIF_F_GSO_SHIFT)
 
@@ -372,8 +372,8 @@ struct net_device
 	unsigned char		link_mode; /* mapping policy to operstate */
 
 	unsigned		mtu;	/* interface MTU value		*/
-	unsigned short		type;	/* interface hardware type	*/
-	unsigned short		hard_header_len;	/* hardware hdr length	*/
+	unsigned short		type;	/* interface hardware type	*/  // 接口的硬件类型。ARP模块处理中，用type来判断接口的硬件类型地址。以太网接口来说，值为 ARPHRD_ETHER
+	unsigned short		hard_header_len;	/* hardware hdr length	*/ // 硬件首部长度， 以太网为ETH_HLEN
 	// 在启动了bonding网络负载均衡后，指向bonding的虚拟网络设备
 	struct net_device	*master; /* Pointer to master device of a group,
 					  * which this device is member of.

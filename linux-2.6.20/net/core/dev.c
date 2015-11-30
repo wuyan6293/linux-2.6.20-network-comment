@@ -146,7 +146,7 @@
  */
 
 static DEFINE_SPINLOCK(ptype_lock);
-static struct list_head ptype_base[16];	/* 16 way hashed list */		// °´ÕÕĞ­ÒéÀàĞÍ¹¹ÔìµÄpacket_typeµÄhash±í
+static struct list_head ptype_base[16];	/* 16 way hashed list */		// æŒ‰ç…§åè®®ç±»å‹æ„é€ çš„packet_typeçš„hashè¡¨
 static struct list_head ptype_all;		/* Taps */
 
 #ifdef CONFIG_NET_DMA
@@ -174,16 +174,16 @@ static spinlock_t net_dma_event_lock;
  * unregister_netdevice(), which must be called with the rtnl
  * semaphore held.
  */
-struct net_device *dev_base;		// net_deviceÁ´±íµÄÍ·
-static struct net_device **dev_tail = &dev_base;	
+struct net_device *dev_base;		// net_deviceé“¾è¡¨çš„å¤´
+static struct net_device **dev_tail = &dev_base;
 DEFINE_RWLOCK(dev_base_lock);
 
 EXPORT_SYMBOL(dev_base);
 EXPORT_SYMBOL(dev_base_lock);
 
 #define NETDEV_HASHBITS	8
-static struct hlist_head dev_name_head[1<<NETDEV_HASHBITS];		// net_device°´name×÷ÎªkeyµÄhash±í
-static struct hlist_head dev_index_head[1<<NETDEV_HASHBITS];	// net_device°´index×÷ÎªkeyµÄhash±í
+static struct hlist_head dev_name_head[1<<NETDEV_HASHBITS];		// net_deviceæŒ‰nameä½œä¸ºkeyçš„hashè¡¨
+static struct hlist_head dev_index_head[1<<NETDEV_HASHBITS];	// net_deviceæŒ‰indexä½œä¸ºkeyçš„hashè¡¨
 
 static inline struct hlist_head *dev_name_hash(const char *name)
 {
@@ -255,7 +255,7 @@ static int netdev_nit;
  *	is linked into kernel lists and may not be freed until it has been
  *	removed from the kernel lists.
  *
- *	This call does not sleep therefore it can not 
+ *	This call does not sleep therefore it can not
  *	guarantee all CPU's that are in middle of receiving packets
  *	will see the new packet type (until the next received packet).
  */
@@ -282,7 +282,7 @@ void dev_add_pack(struct packet_type *pt)
  *	Remove a protocol handler that was previously added to the kernel
  *	protocol handlers by dev_add_pack(). The passed &packet_type is removed
  *	from the kernel lists and can be freed or reused once this function
- *	returns. 
+ *	returns.
  *
  *      The packet type might still be in use by receivers
  *	and must not be freed until after all the CPU's have gone
@@ -327,7 +327,7 @@ out:
 void dev_remove_pack(struct packet_type *pt)
 {
 	__dev_remove_pack(pt);
-	
+
 	synchronize_net();
 }
 
@@ -607,7 +607,7 @@ EXPORT_SYMBOL(dev_getfirstbyhwtype);
  *	@mask: bitmask of bits in if_flags to check
  *
  *	Search for any interface with the given flags. Returns NULL if a device
- *	is not found or a pointer to the device. The device returned has 
+ *	is not found or a pointer to the device. The device returned has
  *	had a reference added and the pointer is safe until the user calls
  *	dev_put to indicate they have finished with it.
  */
@@ -802,7 +802,7 @@ void netdev_state_change(struct net_device *dev)
 
 void dev_load(const char *name)
 {
-	struct net_device *dev;  
+	struct net_device *dev;
 
 	read_lock(&dev_base_lock);
 	dev = __dev_get_by_name(name);
@@ -847,15 +847,15 @@ int dev_open(struct net_device *dev)
 	/*
 	 *	Is it even present?
 	 */
-	if (!netif_device_present(dev))		// Éè±¸ÊÇ·ñ×¼±¸ºÃ
+	if (!netif_device_present(dev))		// è®¾å¤‡æ˜¯å¦å‡†å¤‡å¥½
 		return -ENODEV;
 
 	/*
 	 *	Call device private open method
 	 */
-	set_bit(__LINK_STATE_START, &dev->state);		// ÉèÖÃÍøÂçÉè±¸ÆôÓÃ×´Ì¬
+	set_bit(__LINK_STATE_START, &dev->state);		// è®¾ç½®ç½‘ç»œè®¾å¤‡å¯ç”¨çŠ¶æ€
 	if (dev->open) {
-		ret = dev->open(dev);						// µ÷ÓÃÇı¶¯º¯ÊıÅäÖÃµÄopenº¯Êı
+		ret = dev->open(dev);						// è°ƒç”¨é©±åŠ¨å‡½æ•°é…ç½®çš„openå‡½æ•°
 		if (ret)
 			clear_bit(__LINK_STATE_START, &dev->state);
 	}
@@ -868,17 +868,17 @@ int dev_open(struct net_device *dev)
 		/*
 		 *	Set the flags.
 		 */
-		dev->flags |= IFF_UP;		// ÉèÖÃÍøÂçÉè±¸µÄÒÑÆô¶¯±êÖ¾
+		dev->flags |= IFF_UP;		// è®¾ç½®ç½‘ç»œè®¾å¤‡çš„å·²å¯åŠ¨æ ‡å¿—
 
 		/*
 		 *	Initialize multicasting status
 		 */
-		dev_mc_upload(dev);			// ³õÊ¼»¯×é²¥µØÖ·±í
+		dev_mc_upload(dev);			// åˆå§‹åŒ–ç»„æ’­åœ°å€è¡¨
 
 		/*
 		 *	Wakeup transmit queue engine
 		 */
-		dev_activate(dev);			// Æô¶¯Á÷Á¿¿ØÖÆÒıÇæ
+		dev_activate(dev);			// å¯åŠ¨æµé‡æ§åˆ¶å¼•æ“
 
 		/*
 		 *	... and announce new interface.
@@ -908,16 +908,16 @@ int dev_close(struct net_device *dev)
 	 */
 	raw_notifier_call_chain(&netdev_chain, NETDEV_GOING_DOWN, dev);
 
-	dev_deactivate(dev);		// ½ûÖ¹³ö¿Ú¶ÓÁĞ¹æÔò£¬È·±£Éè±¸²»ÔÙÓÃÓÚ´«Êä£¬²¢Í£Ö¹²»ÔÙĞèÒªµÄ¶¨Ê±Æ÷
+	dev_deactivate(dev);		// ç¦æ­¢å‡ºå£é˜Ÿåˆ—è§„åˆ™ï¼Œç¡®ä¿è®¾å¤‡ä¸å†ç”¨äºä¼ è¾“ï¼Œå¹¶åœæ­¢ä¸å†éœ€è¦çš„å®šæ—¶å™¨
 
-	clear_bit(__LINK_STATE_START, &dev->state);	// ĞŞ¸Ä±êÖ¾Î»
+	clear_bit(__LINK_STATE_START, &dev->state);	// ä¿®æ”¹æ ‡å¿—ä½
 
 	/* Synchronize to scheduled poll. We cannot touch poll list,
 	 * it can be even on different cpu. So just clear netif_running(),
 	 * and wait when poll really will happen. Actually, the best place
 	 * for this is inside dev->stop() after device stopped its irq
 	 * engine, but this requires more changes in devices. */
-	// Èç¹ûÔÚ¹Ø±ÕÊ±£¬Éè±¸ÕıÔÚÂÖÑ¯½ÓÊÕÊı¾İ°ü£¬ÔòĞèÒªµÈ´ı
+	// å¦‚æœåœ¨å…³é—­æ—¶ï¼Œè®¾å¤‡æ­£åœ¨è½®è¯¢æ¥æ”¶æ•°æ®åŒ…ï¼Œåˆ™éœ€è¦ç­‰å¾…
 	smp_mb__after_clear_bit(); /* Commit netif_running(). */
 	while (test_bit(__LINK_STATE_RX_SCHED, &dev->state)) {
 		/* No hurry. */
@@ -932,13 +932,13 @@ int dev_close(struct net_device *dev)
 	 *	event.
 	 */
 	if (dev->stop)
-		dev->stop(dev);			// Èç¹ûÊµÏÖÁËstopº¯Êı£¬Ôòµ÷ÓÃÖ®£¬ÓëopenÏà·´
+		dev->stop(dev);			// å¦‚æœå®ç°äº†stopå‡½æ•°ï¼Œåˆ™è°ƒç”¨ä¹‹ï¼Œä¸openç›¸å
 
 	/*
 	 *	Device is now down.
 	 */
 
-	dev->flags &= ~IFF_UP;		// È¥µôÆôÓÃ±êÖ¾
+	dev->flags &= ~IFF_UP;		// å»æ‰å¯ç”¨æ ‡å¿—
 
 	/*
 	 * Tell people we are down
@@ -964,7 +964,7 @@ int dev_close(struct net_device *dev)
  *	is returned on a failure.
  *
  * 	When registered all registration and up events are replayed
- *	to the new notifier to allow device to have a race free 
+ *	to the new notifier to allow device to have a race free
  *	view of the network device list.
  */
 
@@ -979,7 +979,7 @@ int register_netdevice_notifier(struct notifier_block *nb)
 		for (dev = dev_base; dev; dev = dev->next) {
 			nb->notifier_call(nb, NETDEV_REGISTER, dev);
 
-			if (dev->flags & IFF_UP) 
+			if (dev->flags & IFF_UP)
 				nb->notifier_call(nb, NETDEV_UP, dev);
 		}
 	}
@@ -1057,7 +1057,7 @@ static inline void net_timestamp(struct sk_buff *skb)
  *	Support routine. Sends outgoing frames to any network
  *	taps currently in use.
  */
-// ¸Ãº¯ÊıÓÃÀ´½ÓÊÕÓÉ±¾µØÊä³öµÄÊı¾İ°ü£¬ÔÚÁ´Â·²ãµÄÊä³ö¹ı³ÌÖĞ£¬»áµ÷ÓÃ¸Ãº¯Êı
+// è¯¥å‡½æ•°ç”¨æ¥æ¥æ”¶ç”±æœ¬åœ°è¾“å‡ºçš„æ•°æ®åŒ…ï¼Œåœ¨é“¾è·¯å±‚çš„è¾“å‡ºè¿‡ç¨‹ä¸­ï¼Œä¼šè°ƒç”¨è¯¥å‡½æ•°
 static void dev_queue_xmit_nit(struct sk_buff *skb, struct net_device *dev)
 {
 	struct packet_type *ptype;
@@ -1101,16 +1101,16 @@ static void dev_queue_xmit_nit(struct sk_buff *skb, struct net_device *dev)
 
 
 void __netif_schedule(struct net_device *dev)
-{	// Èç¹ûÍøÂçÉè±¸Ã»ÓĞ¹Ø±ÕÅÅ¶Ó¹¦ÄÜ£¬Ôò¼¤»îÍøÂçÊä³öÈíÖĞ¶Ï
+{	// å¦‚æœç½‘ç»œè®¾å¤‡æ²¡æœ‰å…³é—­æ’é˜ŸåŠŸèƒ½ï¼Œåˆ™æ¿€æ´»ç½‘ç»œè¾“å‡ºè½¯ä¸­æ–­
 	if (!test_and_set_bit(__LINK_STATE_SCHED, &dev->state)) {
 		unsigned long flags;
 		struct softnet_data *sd;
-		// Ã»ÓĞ¿ªÆôÁ÷¿Ø£¬½«ÍøÂçÉè±¸Á¬½Óµ½softnet_dataÖĞµÄoutput_queue¶ÓÁĞÉÏ
+		// æ²¡æœ‰å¼€å¯æµæ§ï¼Œå°†ç½‘ç»œè®¾å¤‡è¿æ¥åˆ°softnet_dataä¸­çš„output_queueé˜Ÿåˆ—ä¸Š
 		local_irq_save(flags);
 		sd = &__get_cpu_var(softnet_data);
-		dev->next_sched = sd->output_queue;		// ½«dev¹Òµ½output_queueºóÃæ
+		dev->next_sched = sd->output_queue;		// å°†devæŒ‚åˆ°output_queueåé¢
 		sd->output_queue = dev;
-		raise_softirq_irqoff(NET_TX_SOFTIRQ);	// ¼¤»îÍøÂçÊä³öÈíÖĞ¶Ï
+		raise_softirq_irqoff(NET_TX_SOFTIRQ);	// æ¿€æ´»ç½‘ç»œè¾“å‡ºè½¯ä¸­æ–­
 		local_irq_restore(flags);
 	}
 }
@@ -1197,7 +1197,7 @@ int skb_checksum_help(struct sk_buff *skb)
 
 out_set_summed:
 	skb->ip_summed = CHECKSUM_NONE;
-out:	
+out:
 	return ret;
 }
 
@@ -1258,7 +1258,7 @@ EXPORT_SYMBOL(skb_gso_segment);
 void netdev_rx_csum_fault(struct net_device *dev)
 {
 	if (net_ratelimit()) {
-		printk(KERN_ERR "%s: hw csum failure.\n", 
+		printk(KERN_ERR "%s: hw csum failure.\n",
 			dev ? dev->name : "<unknown>");
 		dump_stack();
 	}
@@ -1342,22 +1342,22 @@ static int dev_gso_segment(struct sk_buff *skb)
 
 int dev_hard_start_xmit(struct sk_buff *skb, struct net_device *dev)
 {
-	if (likely(!skb->next)) {		// Èç¹ûÊä³öµÄÊÇµ¥¸öÊı¾İ°ü
-		if (netdev_nit)				// Êä³ö±¨ÎÄ£¬ĞèÒª¸øÒ»·İ±¸·İµ½±¾µØÊäÈë£¬¹©Ò»Ğ©AF_PACKET,SOCK_RAWÌ×½Ó×ÖÊ¹ÓÃ
+	if (likely(!skb->next)) {		// å¦‚æœè¾“å‡ºçš„æ˜¯å•ä¸ªæ•°æ®åŒ…
+		if (netdev_nit)				// è¾“å‡ºæŠ¥æ–‡ï¼Œéœ€è¦ç»™ä¸€ä»½å¤‡ä»½åˆ°æœ¬åœ°è¾“å…¥ï¼Œä¾›ä¸€äº›AF_PACKET,SOCK_RAWå¥—æ¥å­—ä½¿ç”¨
 			dev_queue_xmit_nit(skb, dev);
 
-		if (netif_needs_gso(dev, skb)) {			// Èç¹ûÊı¾İ°üÊÇGSOÊı¾İ°ü£¬ÍøÂçÉè±¸²»Ö§³Ö¸ÃÌØĞÔ
-			if (unlikely(dev_gso_segment(skb)))	// ¶ÔGSOÊı¾İ°ü½øĞĞ·Ö¸î
+		if (netif_needs_gso(dev, skb)) {			// å¦‚æœæ•°æ®åŒ…æ˜¯GSOæ•°æ®åŒ…ï¼Œç½‘ç»œè®¾å¤‡ä¸æ”¯æŒè¯¥ç‰¹æ€§
+			if (unlikely(dev_gso_segment(skb)))	// å¯¹GSOæ•°æ®åŒ…è¿›è¡Œåˆ†å‰²
 				goto out_kfree_skb;
-			if (skb->next)							// Èç¹û·Ö¸îºó»¹ÊÇÒ»¸öÊı¾İ°ü£¬Ö±½Ó·¢ËÍ
+			if (skb->next)							// å¦‚æœåˆ†å‰²åè¿˜æ˜¯ä¸€ä¸ªæ•°æ®åŒ…ï¼Œç›´æ¥å‘é€
 				goto gso;
 		}
 
-		return dev->hard_start_xmit(skb, dev);		// ·¢ËÍº¯Êı		
+		return dev->hard_start_xmit(skb, dev);		// å‘é€å‡½æ•°
 	}
 
 gso:
-	do {			// Ñ­»·¶Ô¶à¸ö±¨ÎÄ½øĞĞ·¢ËÍ
+	do {			// å¾ªç¯å¯¹å¤šä¸ªæŠ¥æ–‡è¿›è¡Œå‘é€
 		struct sk_buff *nskb = skb->next;
 		int rc;
 
@@ -1372,7 +1372,7 @@ gso:
 		if (unlikely(netif_queue_stopped(dev) && skb->next))
 			return NETDEV_TX_BUSY;
 	} while (skb->next);
-	
+
 	skb->destructor = DEV_GSO_CB(skb)->destructor;
 
 out_kfree_skb:
@@ -1425,59 +1425,59 @@ int dev_queue_xmit(struct sk_buff *skb)
 	int rc = -ENOMEM;
 
 	/* GSO will handle the following emulations directly. */
-	if (netif_needs_gso(dev, skb))	// Èç¹ûÊÇGSOÊı¾İ°ü£¬ÇÒÍøÂçÉè±¸Ö§³ÖGSOÊı¾İ°ü´¦Àí
+	if (netif_needs_gso(dev, skb))	// å¦‚æœæ˜¯GSOæ•°æ®åŒ…ï¼Œä¸”ç½‘ç»œè®¾å¤‡æ”¯æŒGSOæ•°æ®åŒ…å¤„ç†
 		goto gso;
 
-	if (skb_shinfo(skb)->frag_list &&			// ¶ÔÓÚFRAGLISTÀàĞÍµÄ¾ÛºÏ·ÖÉ¢I/OÊı¾İ°ü
-	    !(dev->features & NETIF_F_FRAGLIST) &&	// Èç¹ûÍøÂçÉè±¸²»Ö§³Ö¸ÃÌØĞÔ
-	    __skb_linearize(skb))					// ÇÒÏßĞÔ»¯´¦ÀíÊ§°Ü£¬Ôò·ÅÆú¸Ã±¨ÎÄ£¬·¢ËÍÊ§°Ü
+	if (skb_shinfo(skb)->frag_list &&			// å¯¹äºFRAGLISTç±»å‹çš„èšåˆåˆ†æ•£I/Oæ•°æ®åŒ…
+	    !(dev->features & NETIF_F_FRAGLIST) &&	// å¦‚æœç½‘ç»œè®¾å¤‡ä¸æ”¯æŒè¯¥ç‰¹æ€§
+	    __skb_linearize(skb))					// ä¸”çº¿æ€§åŒ–å¤„ç†å¤±è´¥ï¼Œåˆ™æ”¾å¼ƒè¯¥æŠ¥æ–‡ï¼Œå‘é€å¤±è´¥
 		goto out_kfree_skb;
 
 	/* Fragmented skb is linearized if device does not support SG,
 	 * or if at least one of fragments is in highmem and device
 	 * does not support DMA from it.
 	 */
-	if (skb_shinfo(skb)->nr_frags &&			// ¶ÔÓÚSGÀàĞÍµÄ¾ÛºÏ·ÖÉ¢I/OÊı¾İ°ü£¬Èç¹ûÍøÂçÉè±¸²»Ö§³ÖGSO£¬ĞèÒª×öÏßĞÔ»¯´¦Àí
-	    (!(dev->features & NETIF_F_SG) || illegal_highdma(dev, skb)) &&		// Èç¹ûÉè±¸²»ÖªµÀÔÚ¸ß¶ËÄÚ´æÊ¹ÓÃDMA
+	if (skb_shinfo(skb)->nr_frags &&			// å¯¹äºSGç±»å‹çš„èšåˆåˆ†æ•£I/Oæ•°æ®åŒ…ï¼Œå¦‚æœç½‘ç»œè®¾å¤‡ä¸æ”¯æŒGSOï¼Œéœ€è¦åšçº¿æ€§åŒ–å¤„ç†
+	    (!(dev->features & NETIF_F_SG) || illegal_highdma(dev, skb)) &&		// å¦‚æœè®¾å¤‡ä¸çŸ¥é“åœ¨é«˜ç«¯å†…å­˜ä½¿ç”¨DMA
 	    __skb_linearize(skb))
-		goto out_kfree_skb;					// ¶ªÆúÊı¾İ°ü
+		goto out_kfree_skb;					// ä¸¢å¼ƒæ•°æ®åŒ…
 
 	/* If packet is not checksummed and device does not support
 	 * checksumming for this protocol, complete checksumming here.
 	 */
-	if (skb->ip_summed == CHECKSUM_PARTIAL &&		// Èç¹ûÊı¾İ°üÃ»ÓĞ¼ÆËãĞ£ÑéºÍ
-	    (!(dev->features & NETIF_F_GEN_CSUM) &&		// Ó²¼ş²»Ö§³Ö¸ÃÌØĞÔ
+	if (skb->ip_summed == CHECKSUM_PARTIAL &&		// å¦‚æœæ•°æ®åŒ…æ²¡æœ‰è®¡ç®—æ ¡éªŒå’Œ
+	    (!(dev->features & NETIF_F_GEN_CSUM) &&		// ç¡¬ä»¶ä¸æ”¯æŒè¯¥ç‰¹æ€§
 	     (!(dev->features & NETIF_F_IP_CSUM) ||
 	      skb->protocol != htons(ETH_P_IP))))
-	      	if (skb_checksum_help(skb))				// ÔòĞèÒªÔÚÕâÀï¼ÆËãĞ£ÑéºÍ
-	      		goto out_kfree_skb;				// Èç¹ûÊ§°Ü£¬Ôò¶ªÆú
+	      	if (skb_checksum_help(skb))				// åˆ™éœ€è¦åœ¨è¿™é‡Œè®¡ç®—æ ¡éªŒå’Œ
+	      		goto out_kfree_skb;				// å¦‚æœå¤±è´¥ï¼Œåˆ™ä¸¢å¼ƒ
 
 gso:
 	spin_lock_prefetch(&dev->queue_lock);
 
-	/* Disable soft irqs for various locks below. Also 
-	 * stops preemption for RCU. 
+	/* Disable soft irqs for various locks below. Also
+	 * stops preemption for RCU.
 	 */
-	rcu_read_lock_bh(); 
+	rcu_read_lock_bh();
 
-	/* Updates of qdisc are serialized by queue_lock. 
-	 * The struct Qdisc which is pointed to by qdisc is now a 
-	 * rcu structure - it may be accessed without acquiring 
+	/* Updates of qdisc are serialized by queue_lock.
+	 * The struct Qdisc which is pointed to by qdisc is now a
+	 * rcu structure - it may be accessed without acquiring
 	 * a lock (but the structure may be stale.) The freeing of the
-	 * qdisc will be deferred until it's known that there are no 
+	 * qdisc will be deferred until it's known that there are no
 	 * more references to it.
-	 * 
-	 * If the qdisc has an enqueue function, we still need to 
+	 *
+	 * If the qdisc has an enqueue function, we still need to
 	 * hold the queue_lock before calling it, since queue_lock
 	 * also serializes access to the device queue.
 	 */
 
-	q = rcu_dereference(dev->qdisc);	// »ñÈ¡Êä³öÍøÂçÉè±¸ÅÅ¶Ó¹æ³Ì
+	q = rcu_dereference(dev->qdisc);	// è·å–è¾“å‡ºç½‘ç»œè®¾å¤‡æ’é˜Ÿè§„ç¨‹
 #ifdef CONFIG_NET_CLS_ACT
 	skb->tc_verd = SET_TC_AT(skb->tc_verd,AT_EGRESS);
 #endif
-	if (q->enqueue) {					// Èç¹ûÅÅ¶Ó¹æ³ÌÖĞ¶¨ÒåÁËÈë¶Ó²Ù×÷½Ó¿Ú£¬ÔòËµÃ÷ÆôÓÃÁËQoS
-		/* Grab device queue */			// ½«´ı·¢ËÍÊı¾İ°ü¼ÓÈëµ½ÅÅ¶Ó¹æÔòÖĞ£¬½øĞĞÁ÷Á¿¿ØÖÆ£¬È»ºó·µ»Ø
+	if (q->enqueue) {					// å¦‚æœæ’é˜Ÿè§„ç¨‹ä¸­å®šä¹‰äº†å…¥é˜Ÿæ“ä½œæ¥å£ï¼Œåˆ™è¯´æ˜å¯ç”¨äº†QoS
+		/* Grab device queue */			// å°†å¾…å‘é€æ•°æ®åŒ…åŠ å…¥åˆ°æ’é˜Ÿè§„åˆ™ä¸­ï¼Œè¿›è¡Œæµé‡æ§åˆ¶ï¼Œç„¶åè¿”å›
 		spin_lock(&dev->queue_lock);
 		q = dev->qdisc;
 		if (q->enqueue) {
@@ -1490,7 +1490,7 @@ gso:
 		}
 		spin_unlock(&dev->queue_lock);
 	}
-	// Ã»ÓĞ¿ªÆôQOSµÄÉè±¸£¬ÔòÖ±½ÓÊä³öÊı¾İ°ü
+	// æ²¡æœ‰å¼€å¯QOSçš„è®¾å¤‡ï¼Œåˆ™ç›´æ¥è¾“å‡ºæ•°æ®åŒ…
 	/* The device has no queue. Common case for software devices:
 	   loopback, all the sorts of tunnels...
 
@@ -1512,7 +1512,7 @@ gso:
 
 			if (!netif_queue_stopped(dev)) {
 				rc = 0;
-				if (!dev_hard_start_xmit(skb, dev)) {	// µ÷ÓÃdev_hard_start_xmit()Êä³öÊı¾İ°üµ½ÍøÂçÉè±¸
+				if (!dev_hard_start_xmit(skb, dev)) {	// è°ƒç”¨dev_hard_start_xmit()è¾“å‡ºæ•°æ®åŒ…åˆ°ç½‘ç»œè®¾å¤‡
 					HARD_TX_UNLOCK(dev);
 					goto out;
 				}
@@ -1521,7 +1521,7 @@ gso:
 			if (net_ratelimit())
 				printk(KERN_CRIT "Virtual device %s asks to "
 				       "queue packet!\n", dev->name);
-		} else {	// ¸Ãº¯Êı²»ÔÊĞíµİ¹éµ÷ÓÃ£¬Èç¹ûµ÷ÓÃÁË£¬ÔòÊä³ö´íÎóĞÅÏ¢
+		} else {	// è¯¥å‡½æ•°ä¸å…è®¸é€’å½’è°ƒç”¨ï¼Œå¦‚æœè°ƒç”¨äº†ï¼Œåˆ™è¾“å‡ºé”™è¯¯ä¿¡æ¯
 			/* Recursion is detected! It is possible,
 			 * unfortunately */
 			if (net_ratelimit())
@@ -1546,8 +1546,8 @@ out:
 			Receiver routines
   =======================================================================*/
 
-int netdev_max_backlog = 1000;	// ·ÇNAPIÁ´Â·²ãµÄ»º´æ¶ÓÁĞ³¤¶ÈÉÏÏŞ
-int netdev_budget = 300;		// ÔÚÒ»´ÎÖĞ¶ÏÖĞ£¬ËùÓĞÍøÂçÉè±¸¿ÉÒÔ´ÓÍøÂçÉè±¸ÂÖÑ¯¶ÓÁĞÖĞ¶ÁÈ¡µÄ±¨ÎÄ×ÜÅäºÏ
+int netdev_max_backlog = 1000;	// éNAPIé“¾è·¯å±‚çš„ç¼“å­˜é˜Ÿåˆ—é•¿åº¦ä¸Šé™
+int netdev_budget = 300;		// åœ¨ä¸€æ¬¡ä¸­æ–­ä¸­ï¼Œæ‰€æœ‰ç½‘ç»œè®¾å¤‡å¯ä»¥ä»ç½‘ç»œè®¾å¤‡è½®è¯¢é˜Ÿåˆ—ä¸­è¯»å–çš„æŠ¥æ–‡æ€»é…åˆ
 int weight_p = 64;            /* old backlog weight */
 
 DEFINE_PER_CPU(struct netif_rx_stats, netdev_rx_stat) = { 0, };
@@ -1563,23 +1563,23 @@ DEFINE_PER_CPU(struct netif_rx_stats, netdev_rx_stat) = { 0, };
  *	protocol layers.
  *
  *	return values:
- *	NET_RX_SUCCESS	(no congestion)				ÉÏ²ãÃ»ÓĞ·¢ÉúÓµÈû
- *	NET_RX_CN_LOW   (low congestion)			ÉÏ²ã·¢ÉúµÍ¶ÈÓµÈû
- *	NET_RX_CN_MOD   (moderate congestion)		ÉÏ²ã·¢ÉúÖĞ¶ÈÓµÈû
- *	NET_RX_CN_HIGH  (high congestion)			ÉÏ²ã·¢Éú¸ß¶ÈÓµÈû
- *	NET_RX_DROP     (packet was dropped)		±¨ÎÄ±»¶ªÆú
+ *	NET_RX_SUCCESS	(no congestion)				ä¸Šå±‚æ²¡æœ‰å‘ç”Ÿæ‹¥å¡
+ *	NET_RX_CN_LOW   (low congestion)			ä¸Šå±‚å‘ç”Ÿä½åº¦æ‹¥å¡
+ *	NET_RX_CN_MOD   (moderate congestion)		ä¸Šå±‚å‘ç”Ÿä¸­åº¦æ‹¥å¡
+ *	NET_RX_CN_HIGH  (high congestion)			ä¸Šå±‚å‘ç”Ÿé«˜åº¦æ‹¥å¡
+ *	NET_RX_DROP     (packet was dropped)		æŠ¥æ–‡è¢«ä¸¢å¼ƒ
  *
  */
-// ·ÇNAPI·½Ê½µÄ±¨ÎÄ½ÓÊÕ¡£½«´ÓÍøÂçÉè±¸ÖĞ½ÓÊÕµ½µÄ±¨ÎÄ¼ÓÈëµ½½Ó¿Ú²ãµÄ»º´æ¶ÓÁĞÖĞ
+// éNAPIæ–¹å¼çš„æŠ¥æ–‡æ¥æ”¶ã€‚å°†ä»ç½‘ç»œè®¾å¤‡ä¸­æ¥æ”¶åˆ°çš„æŠ¥æ–‡åŠ å…¥åˆ°æ¥å£å±‚çš„ç¼“å­˜é˜Ÿåˆ—ä¸­
 int netif_rx(struct sk_buff *skb)
 {
 	struct softnet_data *queue;
 	unsigned long flags;
 
 	/* if netpoll wants it, pretend we never saw it */
-	if (netpoll_rx(skb))			// ½«Êı¾İ°ü´«µİ¸ønetpollÄ£¿é£¬Èç¹ûnetpollÊµÀı½ÓÊÕÁË£¬²»ÔÙ´«µİµ½Ğ­ÒéÕ»
+	if (netpoll_rx(skb))			// å°†æ•°æ®åŒ…ä¼ é€’ç»™netpollæ¨¡å—ï¼Œå¦‚æœnetpollå®ä¾‹æ¥æ”¶äº†ï¼Œä¸å†ä¼ é€’åˆ°åè®®æ ˆ
 		return NET_RX_DROP;
-	// Èç¹ûÊ¹ÄÜÁËSO_TIMESTAMP Ôò¼ÇÂ¼½ÓÊÕ±¨ÎÄµÄÊ±¼ä´Á
+	// å¦‚æœä½¿èƒ½äº†SO_TIMESTAMP åˆ™è®°å½•æ¥æ”¶æŠ¥æ–‡çš„æ—¶é—´æˆ³
 	if (!skb->tstamp.off_sec)
 		net_timestamp(skb);
 
@@ -1588,22 +1588,22 @@ int netif_rx(struct sk_buff *skb)
 	 * short when CPU is congested, but is still operating.
 	 */
 	local_irq_save(flags);
-	queue = &__get_cpu_var(softnet_data);		// »ñÈ¡CPU½Ó¿Ú²ã»º´æ¶ÓÁĞ
+	queue = &__get_cpu_var(softnet_data);		// è·å–CPUæ¥å£å±‚ç¼“å­˜é˜Ÿåˆ—
 
-	__get_cpu_var(netdev_rx_stat).total++;		// ¸üĞÂµ±Ç°CPU½Ó¿Ú²ã½ÓÊÕ´ÎÊı
-	if (queue->input_pkt_queue.qlen <= netdev_max_backlog) {	// Èç¹û¶ÓÁĞÎ´Âú
-		if (queue->input_pkt_queue.qlen) {		// Èç¹û¶ÓÁĞ²»Îª¿Õ£¬ÔòËµÃ÷¸Ã¶ÓÁĞÓÉÓÚÊı¾İ°ü½Ï¶àĞèÒªµÈ´ıÏÂ´ÎÈíÖĞ¶Ï´¦Àí£¬½«Êı¾İ°ü¼ÓÈë¶ÓÁĞºó·µ»Ø
+	__get_cpu_var(netdev_rx_stat).total++;		// æ›´æ–°å½“å‰CPUæ¥å£å±‚æ¥æ”¶æ¬¡æ•°
+	if (queue->input_pkt_queue.qlen <= netdev_max_backlog) {	// å¦‚æœé˜Ÿåˆ—æœªæ»¡
+		if (queue->input_pkt_queue.qlen) {		// å¦‚æœé˜Ÿåˆ—ä¸ä¸ºç©ºï¼Œåˆ™è¯´æ˜è¯¥é˜Ÿåˆ—ç”±äºæ•°æ®åŒ…è¾ƒå¤šéœ€è¦ç­‰å¾…ä¸‹æ¬¡è½¯ä¸­æ–­å¤„ç†ï¼Œå°†æ•°æ®åŒ…åŠ å…¥é˜Ÿåˆ—åè¿”å›
 enqueue:
 			dev_hold(skb->dev);
 			__skb_queue_tail(&queue->input_pkt_queue, skb);
 			local_irq_restore(flags);
 			return NET_RX_SUCCESS;
 		}
-		// ½«ĞéÄâÍøÂçÉè±¸backlog_devÌí¼Óµ½ÍøÂçÉè±¸ÂÖÑ¯¶ÓÁĞ£¬¼¤»îÊı¾İ°üÊäÈëÈíÖĞ¶Ï¡£ÔÚÊı¾İ°üÊäÈëÈíÖĞ¶Ï´¦ÀíÀı³ÌÖĞ£¬»áµ÷ÓÃbacklog_devµÄÂÖÑ¯º¯Êıprocess_backlog()
+		// å°†è™šæ‹Ÿç½‘ç»œè®¾å¤‡backlog_devæ·»åŠ åˆ°ç½‘ç»œè®¾å¤‡è½®è¯¢é˜Ÿåˆ—ï¼Œæ¿€æ´»æ•°æ®åŒ…è¾“å…¥è½¯ä¸­æ–­ã€‚åœ¨æ•°æ®åŒ…è¾“å…¥è½¯ä¸­æ–­å¤„ç†ä¾‹ç¨‹ä¸­ï¼Œä¼šè°ƒç”¨backlog_devçš„è½®è¯¢å‡½æ•°process_backlog()
 		netif_rx_schedule(&queue->backlog_dev);
 		goto enqueue;
 	}
-	// Èç¹û½Ó¿Ú²ã»º´æ¶ÓÁĞÒÑÂú£¬¶ªÆú±¨ÎÄ
+	// å¦‚æœæ¥å£å±‚ç¼“å­˜é˜Ÿåˆ—å·²æ»¡ï¼Œä¸¢å¼ƒæŠ¥æ–‡
 	__get_cpu_var(netdev_rx_stat).dropped++;
 	local_irq_restore(flags);
 
@@ -1640,11 +1640,11 @@ static inline struct net_device *skb_bond(struct sk_buff *skb)
 
 	return dev;
 }
-// Êä³ö°üÊä³öÈíÖĞ¶Ï£¬Êı¾İ°üÊä³öÈíÖĞ¶ÏÍ¨³£ÓÉnetif_schedule()¼¤»î
+// è¾“å‡ºåŒ…è¾“å‡ºè½¯ä¸­æ–­ï¼Œæ•°æ®åŒ…è¾“å‡ºè½¯ä¸­æ–­é€šå¸¸ç”±netif_schedule()æ¿€æ´»
 static void net_tx_action(struct softirq_action *h)
 {
 	struct softnet_data *sd = &__get_cpu_var(softnet_data);
-	// Èç¹ûÍê³É¶ÓÁĞÉÏÓĞ´ıÊÍ·ÅµÄÊı¾İ°ü£¬ÔòÊÍ·Å
+	// å¦‚æœå®Œæˆé˜Ÿåˆ—ä¸Šæœ‰å¾…é‡Šæ”¾çš„æ•°æ®åŒ…ï¼Œåˆ™é‡Šæ”¾
 	if (sd->completion_queue) {
 		struct sk_buff *clist;
 
@@ -1661,7 +1661,7 @@ static void net_tx_action(struct softirq_action *h)
 			__kfree_skb(skb);
 		}
 	}
-	// Èç¹ûµ±Ç°output_queueÊä³ö¶ÓÁĞÖĞ£¬ÓĞ´ıÊä³öµÄÍøÂçÉè±¸£¬Ôòµ÷ÓÃqdisc_run()À´·¢ËÍÊı¾İ°ü
+	// å¦‚æœå½“å‰output_queueè¾“å‡ºé˜Ÿåˆ—ä¸­ï¼Œæœ‰å¾…è¾“å‡ºçš„ç½‘ç»œè®¾å¤‡ï¼Œåˆ™è°ƒç”¨qdisc_run()æ¥å‘é€æ•°æ®åŒ…
 	if (sd->output_queue) {
 		struct net_device *head;
 
@@ -1715,8 +1715,8 @@ static __inline__ int handle_bridge(struct sk_buff **pskb,
 	if (*pt_prev) {
 		*ret = deliver_skb(*pskb, *pt_prev, orig_dev);
 		*pt_prev = NULL;
-	} 
-	
+	}
+
 	return br_handle_frame_hook(port, pskb);
 }
 #else
@@ -1728,16 +1728,16 @@ static __inline__ int handle_bridge(struct sk_buff **pskb,
  * when CONFIG_NET_CLS_ACT is? otherwise some useless instructions
  * a compare and 2 stores extra right now if we dont have it on
  * but have CONFIG_NET_CLS_ACT
- * NOTE: This doesnt stop any functionality; if you dont have 
+ * NOTE: This doesnt stop any functionality; if you dont have
  * the ingress scheduler, you just cant add policies on ingress.
  *
  */
-static int ing_filter(struct sk_buff *skb) 
+static int ing_filter(struct sk_buff *skb)
 {
 	struct Qdisc *q;
 	struct net_device *dev = skb->dev;
 	int result = TC_ACT_OK;
-	
+
 	if (dev->qdisc_ingress) {
 		__u32 ttl = (__u32) G_TC_RTTL(skb->tc_verd);
 		if (MAX_RED_LOOP < ttl++) {
@@ -1767,23 +1767,23 @@ int netif_receive_skb(struct sk_buff *skb)
 	struct net_device *orig_dev;
 	int ret = NET_RX_DROP;
 	__be16 type;
-	// Èç¹ûÊÇÍ¨¹ıNAPI·½Ê½ÊÕÈ¡±¨ÎÄµÄ£¬ÏÈÅĞ¶ÏÊÇnetpollÊµÀıÊÇ·ñ½ÓÊÕ£¬Èç¹û½ÓÊÕÁË¾Í²»´«µİµ½Ğ­ÒéÕ»
+	// å¦‚æœæ˜¯é€šè¿‡NAPIæ–¹å¼æ”¶å–æŠ¥æ–‡çš„ï¼Œå…ˆåˆ¤æ–­æ˜¯netpollå®ä¾‹æ˜¯å¦æ¥æ”¶ï¼Œå¦‚æœæ¥æ”¶äº†å°±ä¸ä¼ é€’åˆ°åè®®æ ˆ
 	/* if we've gotten here through NAPI, check netpoll */
 	if (skb->dev->poll && netpoll_rx(skb))
 		return NET_RX_DROP;
 
 	if (!skb->tstamp.off_sec)
-		net_timestamp(skb);		// ¼ÇÂ¼Ê±¼ä´Á
+		net_timestamp(skb);		// è®°å½•æ—¶é—´æˆ³
 
 	if (!skb->input_dev)
-		skb->input_dev = skb->dev;	// ÉèÖÃÔ­Ê¼½ÓÊÕ±¨ÎÄµÄÍøÂçÉè±¸
+		skb->input_dev = skb->dev;	// è®¾ç½®åŸå§‹æ¥æ”¶æŠ¥æ–‡çš„ç½‘ç»œè®¾å¤‡
 
 	orig_dev = skb_bond(skb);
 
 	if (!orig_dev)
 		return NET_RX_DROP;
 
-	__get_cpu_var(netdev_rx_stat).total++;	// Í³¼Æ¸ÃCPU½ÓÊÕµ½±¨ÎÄ
+	__get_cpu_var(netdev_rx_stat).total++;	// ç»Ÿè®¡è¯¥CPUæ¥æ”¶åˆ°æŠ¥æ–‡
 
 	skb->h.raw = skb->nh.raw = skb->data;
 	skb->mac_len = skb->nh.raw - skb->mac.raw;
@@ -1798,10 +1798,10 @@ int netif_receive_skb(struct sk_buff *skb)
 		goto ncls;
 	}
 #endif
-	// ÊäÈëÒ»·İ±¨ÎÄÊı¾İµ½ptype_allÁ´±íÖĞµÄĞ­Òé×å
+	// è¾“å…¥ä¸€ä»½æŠ¥æ–‡æ•°æ®åˆ°ptype_allé“¾è¡¨ä¸­çš„åè®®æ—
 	list_for_each_entry_rcu(ptype, &ptype_all, list) {
 		if (!ptype->dev || ptype->dev == skb->dev) {
-			if (pt_prev) 
+			if (pt_prev)
 				ret = deliver_skb(skb, pt_prev, orig_dev);
 			pt_prev = ptype;
 		}
@@ -1825,15 +1825,15 @@ int netif_receive_skb(struct sk_buff *skb)
 	skb->tc_verd = 0;
 ncls:
 #endif
-	// Í¨¹ıÇÅ×ª·¢±¨ÎÄ£¬Èç¹û³É¹¦£¬²»ĞèÒªÊäÈëµ½±¾µØ
+	// é€šè¿‡æ¡¥è½¬å‘æŠ¥æ–‡ï¼Œå¦‚æœæˆåŠŸï¼Œä¸éœ€è¦è¾“å…¥åˆ°æœ¬åœ°
 	if (handle_bridge(&skb, &pt_prev, &ret, orig_dev))
 		goto out;
-	// ÊäÈë±¨ÎÄµ½ptype_baseÁ´±íÖĞ¶ÔÓ¦ÀàĞÍµÄ´¦Àíº¯ÊıÖĞ
+	// è¾“å…¥æŠ¥æ–‡åˆ°ptype_baseé“¾è¡¨ä¸­å¯¹åº”ç±»å‹çš„å¤„ç†å‡½æ•°ä¸­
 	type = skb->protocol;
 	list_for_each_entry_rcu(ptype, &ptype_base[ntohs(type)&15], list) {
 		if (ptype->type == type &&
 		    (!ptype->dev || ptype->dev == skb->dev)) {
-			if (pt_prev) 
+			if (pt_prev)
 				ret = deliver_skb(skb, pt_prev, orig_dev);
 			pt_prev = ptype;
 		}
@@ -1862,30 +1862,30 @@ static int process_backlog(struct net_device *backlog_dev, int *budget)
 	unsigned long start_time = jiffies;
 
 	backlog_dev->weight = weight_p;
-	for (;;) {	// Ñ­»·´¦ÀíÊäÈë¶ÓÁĞinput_pkt_queueÖĞµÄ±¨ÎÄ£¬ÖªµÀ±¨ÎÄÊÕÍê»òÅä¶îÓÃÍê»ò³¬Ê±
+	for (;;) {	// å¾ªç¯å¤„ç†è¾“å…¥é˜Ÿåˆ—input_pkt_queueä¸­çš„æŠ¥æ–‡ï¼ŒçŸ¥é“æŠ¥æ–‡æ”¶å®Œæˆ–é…é¢ç”¨å®Œæˆ–è¶…æ—¶
 		struct sk_buff *skb;
 		struct net_device *dev;
 
 		local_irq_disable();
-		skb = __skb_dequeue(&queue->input_pkt_queue);	// ´ÓÊäÈë¶ÓÁĞÖĞÈ¡Ò»¸ö±¨ÎÄ
+		skb = __skb_dequeue(&queue->input_pkt_queue);	// ä»è¾“å…¥é˜Ÿåˆ—ä¸­å–ä¸€ä¸ªæŠ¥æ–‡
 		if (!skb)
 			goto job_done;
 		local_irq_enable();
 
 		dev = skb->dev;
 
-		netif_receive_skb(skb);		// ½«±¨ÎÄ´«µİµ½ÉÏ²ãĞ­Òé»ò×ª·¢
+		netif_receive_skb(skb);		// å°†æŠ¥æ–‡ä¼ é€’åˆ°ä¸Šå±‚åè®®æˆ–è½¬å‘
 
 		dev_put(dev);
 
 		work++;
 
-		if (work >= quota || jiffies - start_time > 1)		// Èç¹ûÅä¶îÓÃÍê»ò³¬Ê±
+		if (work >= quota || jiffies - start_time > 1)		// å¦‚æœé…é¢ç”¨å®Œæˆ–è¶…æ—¶
 			break;
 
 	}
 
-	backlog_dev->quota -= work;			// ¸üĞÂÅä¶î
+	backlog_dev->quota -= work;			// æ›´æ–°é…é¢
 	*budget -= work;
 	return -1;
 
@@ -1893,44 +1893,44 @@ job_done:
 	backlog_dev->quota -= work;
 	*budget -= work;
 
-	list_del(&backlog_dev->poll_list);	// ÍË³öÂÖÑ¯¶ÓÁĞ
+	list_del(&backlog_dev->poll_list);	// é€€å‡ºè½®è¯¢é˜Ÿåˆ—
 	smp_mb__before_clear_bit();
 	netif_poll_enable(backlog_dev);
 
 	local_irq_enable();
 	return 0;
 }
-// Êı¾İ°üÊäÈëÈíÖĞ¶Ï´¦ÀíÀı³Ì
+// æ•°æ®åŒ…è¾“å…¥è½¯ä¸­æ–­å¤„ç†ä¾‹ç¨‹
 static void net_rx_action(struct softirq_action *h)
 {
-	struct softnet_data *queue = &__get_cpu_var(softnet_data);	// »ñÈ¡ËùÔÚCPUµÄsoftnet_data
+	struct softnet_data *queue = &__get_cpu_var(softnet_data);	// è·å–æ‰€åœ¨CPUçš„softnet_data
 	unsigned long start_time = jiffies;
-	int budget = netdev_budget;				// »ñÈ¡±¾´ÎÈíÖĞ¶ÏµÄ½ÓÊÕ±¨ÎÄÅä¶î
+	int budget = netdev_budget;				// è·å–æœ¬æ¬¡è½¯ä¸­æ–­çš„æ¥æ”¶æŠ¥æ–‡é…é¢
 	void *have;
 
-	local_irq_disable();			// ¹Ø±ÕÈíÖĞ¶Ï
+	local_irq_disable();			// å…³é—­è½¯ä¸­æ–­
 
-	while (!list_empty(&queue->poll_list)) {		// ±éÀúÍøÂçÉè±¸ÂÖÑ¯¶ÓÁĞÉÏµÄÍøÂçÉè±¸£¬ÂÖÑ¯½ÓÊÕÕâĞ©ÍøÂçÉè±¸ÉÏµÄ±¨ÎÄ
+	while (!list_empty(&queue->poll_list)) {		// éå†ç½‘ç»œè®¾å¤‡è½®è¯¢é˜Ÿåˆ—ä¸Šçš„ç½‘ç»œè®¾å¤‡ï¼Œè½®è¯¢æ¥æ”¶è¿™äº›ç½‘ç»œè®¾å¤‡ä¸Šçš„æŠ¥æ–‡
 		struct net_device *dev;
 
-		if (budget <= 0 || jiffies - start_time > 1)	// ½ÓÊÕ±¨ÎÄµÄÅä¶îÓÃÍê»òÕß´óÓÚ1ms
+		if (budget <= 0 || jiffies - start_time > 1)	// æ¥æ”¶æŠ¥æ–‡çš„é…é¢ç”¨å®Œæˆ–è€…å¤§äº1ms
 			goto softnet_break;
 
 		local_irq_enable();
 
-		dev = list_entry(queue->poll_list.next,		// È¡³ö¶ÓÁĞÊ×²¿µÄÍøÂçÉè±¸
+		dev = list_entry(queue->poll_list.next,		// å–å‡ºé˜Ÿåˆ—é¦–éƒ¨çš„ç½‘ç»œè®¾å¤‡
 				 struct net_device, poll_list);
 		have = netpoll_poll_lock(dev);
 
-		if (dev->quota <= 0 || dev->poll(dev, &budget)) {// Èç¹û¸ÃÉè±¸µÄ¶ÁÈ¡Åä¶îÓÃÍê£¬»òÕß¾­¹ıÁËÒ»´ÎÂÖÑ¯»¹ÓĞ±¨ÎÄÎ´¶ÁÍê
+		if (dev->quota <= 0 || dev->poll(dev, &budget)) {// å¦‚æœè¯¥è®¾å¤‡çš„è¯»å–é…é¢ç”¨å®Œï¼Œæˆ–è€…ç»è¿‡äº†ä¸€æ¬¡è½®è¯¢è¿˜æœ‰æŠ¥æ–‡æœªè¯»å®Œ
 			netpoll_poll_unlock(have);
 			local_irq_disable();
-			list_move_tail(&dev->poll_list, &queue->poll_list);	// ½«Éè±¸ÖØĞÂ¼ÓÈëµ½ÂÖÑ¯¶ÓÁĞµÄ¶ÓÎ²
-			if (dev->quota < 0)									// ĞŞ¸Ä¶ÁÈ¡Åä¶î
+			list_move_tail(&dev->poll_list, &queue->poll_list);	// å°†è®¾å¤‡é‡æ–°åŠ å…¥åˆ°è½®è¯¢é˜Ÿåˆ—çš„é˜Ÿå°¾
+			if (dev->quota < 0)									// ä¿®æ”¹è¯»å–é…é¢
 				dev->quota += dev->weight;
 			else
 				dev->quota = dev->weight;
-		} else {										// ¸ÃÉè±¸ÉÏµÄ±¨ÎÄ¶ÁÈ¡Íê³É
+		} else {										// è¯¥è®¾å¤‡ä¸Šçš„æŠ¥æ–‡è¯»å–å®Œæˆ
 			netpoll_poll_unlock(have);
 			dev_put(dev);
 			local_irq_disable();
@@ -1950,7 +1950,7 @@ out:
 		rcu_read_unlock();
 	}
 #endif
-	local_irq_enable();			// ¿ªÆôÈíÖĞ¶Ï
+	local_irq_enable();			// å¼€å¯è½¯ä¸­æ–­
 	return;
 
 softnet_break:
@@ -2282,7 +2282,7 @@ int netdev_set_master(struct net_device *slave, struct net_device *master)
 	}
 
 	slave->master = master;
-	
+
 	synchronize_net();
 
 	if (old)
@@ -2325,7 +2325,7 @@ void dev_set_promiscuity(struct net_device *dev, int inc)
 			"dev=%s prom=%d old_prom=%d auid=%u",
 			dev->name, (dev->flags & IFF_PROMISC),
 			(old_flags & IFF_PROMISC),
-			audit_get_loginuid(current->audit_context)); 
+			audit_get_loginuid(current->audit_context));
 	}
 }
 
@@ -2849,8 +2849,8 @@ static int dev_boot_phase = 1;
 /* Delayed registration/unregisteration */
 static DEFINE_SPINLOCK(net_todo_list_lock);
 static struct list_head net_todo_list = LIST_HEAD_INIT(net_todo_list);
-// net_todo_listÁ´±í°üº¬ÒÑ×¢²á¼´½«½áÊøµÄÍøÂçÉè±¸¡£ÔÚµ÷ÓÃunregister_netdevice()×¢ÏúÉè±¸ºó£¬»áµ÷ÓÃnet_set_todo()½«×¢ÏúµÄÍøÂçÉè±¸ÊµÀıÁ¬½Óµ½net_todo_listÉÏ¡£
-static inline void net_set_todo(struct net_device *dev)// Ïú»Ù¹ı³ÌÔÚnetdev_run_todo()ÖĞ
+// net_todo_listé“¾è¡¨åŒ…å«å·²æ³¨å†Œå³å°†ç»“æŸçš„ç½‘ç»œè®¾å¤‡ã€‚åœ¨è°ƒç”¨unregister_netdevice()æ³¨é”€è®¾å¤‡åï¼Œä¼šè°ƒç”¨net_set_todo()å°†æ³¨é”€çš„ç½‘ç»œè®¾å¤‡å®ä¾‹è¿æ¥åˆ°net_todo_listä¸Šã€‚
+static inline void net_set_todo(struct net_device *dev)// é”€æ¯è¿‡ç¨‹åœ¨netdev_run_todo()ä¸­
 {
 	spin_lock(&net_todo_list_lock);
 	list_add_tail(&dev->todo_list, &net_todo_list);
@@ -2883,7 +2883,7 @@ int register_netdevice(struct net_device *dev)
 	BUG_ON(dev_boot_phase);
 	ASSERT_RTNL();
 
-	might_sleep();		// 2.6ÄÚºËÖ§³ÖÄÚºËÇÀÕ¼£¬might_sleepºê¼ì²éÊÇ·ñĞèÒªÖØĞÂµ÷¶È
+	might_sleep();		// 2.6å†…æ ¸æ”¯æŒå†…æ ¸æŠ¢å ï¼Œmight_sleepå®æ£€æŸ¥æ˜¯å¦éœ€è¦é‡æ–°è°ƒåº¦
 
 	/* When net_device's are persistent, this will be fatal. */
 	BUG_ON(dev->reg_state != NETREG_UNINITIALIZED);
@@ -2899,25 +2899,25 @@ int register_netdevice(struct net_device *dev)
 
 	/* Init, if this function is available */
 	if (dev->init) {
-		ret = dev->init(dev);				// µ÷ÓÃÇı¶¯³ÌĞò³õÊ¼»¯º¯Êı
+		ret = dev->init(dev);				// è°ƒç”¨é©±åŠ¨ç¨‹åºåˆå§‹åŒ–å‡½æ•°
 		if (ret) {
 			if (ret > 0)
 				ret = -EIO;
 			goto out;
 		}
 	}
- 
-	if (!dev_valid_name(dev->name)) {		// ¼ì²âÉè±¸ÃûÊÇ·ñÓĞĞ§
+
+	if (!dev_valid_name(dev->name)) {		// æ£€æµ‹è®¾å¤‡åæ˜¯å¦æœ‰æ•ˆ
 		ret = -EINVAL;
 		goto out;
 	}
 
-	dev->ifindex = dev_new_index();			// ÎªÕâ¸öÉè±¸·ÖÅäÒ»¸öË÷ÒıºÅ
+	dev->ifindex = dev_new_index();			// ä¸ºè¿™ä¸ªè®¾å¤‡åˆ†é…ä¸€ä¸ªç´¢å¼•å·
 	if (dev->iflink == -1)
-		dev->iflink = dev->ifindex;			// Èç¹ûËíµÀÉè±¸Î¨Ò»±êÊ¶Ã»ÓĞÉèÖÃ£¬ÔòÊ¹ÓÃË÷ÒıºÅ
+		dev->iflink = dev->ifindex;			// å¦‚æœéš§é“è®¾å¤‡å”¯ä¸€æ ‡è¯†æ²¡æœ‰è®¾ç½®ï¼Œåˆ™ä½¿ç”¨ç´¢å¼•å·
 
 	/* Check for existence of name */
-	head = dev_name_hash(dev->name);		// ¼ì²éÊÇ·ñÓĞÍ¬ÃûÉè±¸
+	head = dev_name_hash(dev->name);		// æ£€æŸ¥æ˜¯å¦æœ‰åŒåè®¾å¤‡
 	hlist_for_each(p, head) {
 		struct net_device *d
 			= hlist_entry(p, struct net_device, name_hlist);
@@ -2926,7 +2926,7 @@ int register_netdevice(struct net_device *dev)
  			goto out;
 		}
  	}
-	// Éè±¸Èç¹ûÒªÖ§³ÖNETIF_F_SGÌØĞÔ£¬Ò»¶¨ÒªÉè±¸Í¬Ê±Ö§³ÖĞ£ÑéºÍÄÜÁ¦NETIF_F_ALL_CSUM
+	// è®¾å¤‡å¦‚æœè¦æ”¯æŒNETIF_F_SGç‰¹æ€§ï¼Œä¸€å®šè¦è®¾å¤‡åŒæ—¶æ”¯æŒæ ¡éªŒå’Œèƒ½åŠ›NETIF_F_ALL_CSUM
 	/* Fix illegal SG+CSUM combinations. */
 	if ((dev->features & NETIF_F_SG) &&
 	    !(dev->features & NETIF_F_ALL_CSUM)) {
@@ -2934,14 +2934,14 @@ int register_netdevice(struct net_device *dev)
 		       dev->name);
 		dev->features &= ~NETIF_F_SG;
 	}
-	// Éè±¸ÒªÖ§³ÖNETIF_F_TSO£¬Ò»¶¨ĞèÒªÉè±¸ÄÜ¹»Ö§³ÖNETIF_F_SG
+	// è®¾å¤‡è¦æ”¯æŒNETIF_F_TSOï¼Œä¸€å®šéœ€è¦è®¾å¤‡èƒ½å¤Ÿæ”¯æŒNETIF_F_SG
 	/* TSO requires that SG is present as well. */
 	if ((dev->features & NETIF_F_TSO) &&
 	    !(dev->features & NETIF_F_SG)) {
 		printk(KERN_NOTICE "%s: Dropping NETIF_F_TSO since no SG feature.\n",
 		       dev->name);
 		dev->features &= ~NETIF_F_TSO;
-	}	// Éè±¸Ö§³ÖNETIF_F_UFOÌØĞÔµÄÇ°ÌáÌõ¼şÊÇÖ§³ÖNETIF_F_HW_CSUM¡¢NETIF_F_SG
+	}	// è®¾å¤‡æ”¯æŒNETIF_F_UFOç‰¹æ€§çš„å‰ææ¡ä»¶æ˜¯æ”¯æŒNETIF_F_HW_CSUMã€NETIF_F_SG
 	if (dev->features & NETIF_F_UFO) {
 		if (!(dev->features & NETIF_F_HW_CSUM)) {
 			printk(KERN_ERR "%s: Dropping NETIF_F_UFO since no "
@@ -2961,32 +2961,32 @@ int register_netdevice(struct net_device *dev)
 	 *	nil rebuild_header routine,
 	 *	that should be never called and used as just bug trap.
 	 */
-	// ³õÊ¼»¯ÍøÂçÉè±¸ÖĞ£¬ÓÉÓÚÖØ½¨Ó²¼şÊ×²¿µÄº¯ÊıÖ¸Õë
+	// åˆå§‹åŒ–ç½‘ç»œè®¾å¤‡ä¸­ï¼Œç”±äºé‡å»ºç¡¬ä»¶é¦–éƒ¨çš„å‡½æ•°æŒ‡é’ˆ
 	if (!dev->rebuild_header)
 		dev->rebuild_header = default_rebuild_header;
 
-	ret = netdev_register_sysfs(dev);	// ½«ÍøÂçÉè±¸×¢²áµ½sysfs
+	ret = netdev_register_sysfs(dev);	// å°†ç½‘ç»œè®¾å¤‡æ³¨å†Œåˆ°sysfs
 	if (ret)
 		goto out;
-	dev->reg_state = NETREG_REGISTERED;	// ½«ÍøÂçÉè±¸µÄ×´Ì¬ÉèÖÃÎªNETREG_REGISTERED
+	dev->reg_state = NETREG_REGISTERED;	// å°†ç½‘ç»œè®¾å¤‡çš„çŠ¶æ€è®¾ç½®ä¸ºNETREG_REGISTERED
 
 	/*
 	 *	Default initial state at registry is that the
 	 *	device is present.
 	 */
 
-	set_bit(__LINK_STATE_PRESENT, &dev->state);	// ±êÊ¶Éè±¸¶ÔÏµÍ³ÊÇ¿ÉÓÃµÄ
+	set_bit(__LINK_STATE_PRESENT, &dev->state);	// æ ‡è¯†è®¾å¤‡å¯¹ç³»ç»Ÿæ˜¯å¯ç”¨çš„
 
 	dev->next = NULL;
-	dev_init_scheduler(dev);	// ³õÊ¼»¯ÍøÂçÉè±¸ÅÅ¶Ó¹æÔò£¬²¢×¢²áµ½ÍøÂçÉè±¸µÄÁ´±íºÍÏà¹ØÉ¢ÁĞ±íÉÏ
+	dev_init_scheduler(dev);	// åˆå§‹åŒ–ç½‘ç»œè®¾å¤‡æ’é˜Ÿè§„åˆ™ï¼Œå¹¶æ³¨å†Œåˆ°ç½‘ç»œè®¾å¤‡çš„é“¾è¡¨å’Œç›¸å…³æ•£åˆ—è¡¨ä¸Š
 	write_lock_bh(&dev_base_lock);
-	*dev_tail = dev;			// ½«ÍøÂçÉè±¸¹ÒÔØdev_baseÁ´±íÉÏ
+	*dev_tail = dev;			// å°†ç½‘ç»œè®¾å¤‡æŒ‚è½½dev_baseé“¾è¡¨ä¸Š
 	dev_tail = &dev->next;
-	hlist_add_head(&dev->name_hlist, head);			// ¼ÓÈëµ½hash±íÖĞ
+	hlist_add_head(&dev->name_hlist, head);			// åŠ å…¥åˆ°hashè¡¨ä¸­
 	hlist_add_head(&dev->index_hlist, dev_index_hash(dev->ifindex));
-	dev_hold(dev);				// hold×¡Ò»¸öÉè±¸£¬Ôö¼ÓÒ»¸öÒıÓÃ¼ÆÊı
+	dev_hold(dev);				// holdä½ä¸€ä¸ªè®¾å¤‡ï¼Œå¢åŠ ä¸€ä¸ªå¼•ç”¨è®¡æ•°
 	write_unlock_bh(&dev_base_lock);
-	// Í¨ÖªËµÓĞ¶ÔÉè±¸×¢²á¸ĞĞËÈ¤µÄÆäËûÄÚºËÄ£¿é
+	// é€šçŸ¥è¯´æœ‰å¯¹è®¾å¤‡æ³¨å†Œæ„Ÿå…´è¶£çš„å…¶ä»–å†…æ ¸æ¨¡å—
 	/* Notify protocols, that a new device appeared. */
 	raw_notifier_call_chain(&netdev_chain, NETDEV_REGISTER, dev);
 
@@ -3024,7 +3024,7 @@ int register_netdev(struct net_device *dev)
 		if (err < 0)
 			goto out;
 	}
-	
+
 	err = register_netdevice(dev);
 out:
 	rtnl_unlock();
@@ -3041,7 +3041,7 @@ EXPORT_SYMBOL(register_netdev);
  * for netdevice notification, and cleanup and put back the
  * reference if they receive an UNREGISTER event.
  * We can get stuck here if buggy protocols don't correctly
- * call dev_put. 
+ * call dev_put.
  */
 static void netdev_wait_allrefs(struct net_device *dev)
 {
@@ -3105,7 +3105,7 @@ static void netdev_wait_allrefs(struct net_device *dev)
  * 2) Since we run with the RTNL semaphore not held, we can sleep
  *    safely in order to wait for the netdev refcnt to drop to zero.
  */
-static DEFINE_MUTEX(net_todo_run_mutex);	// ±£Ö¤netdev_run_todo()º¯Êı´®ĞĞ»¯
+static DEFINE_MUTEX(net_todo_run_mutex);	// ä¿è¯netdev_run_todo()å‡½æ•°ä¸²è¡ŒåŒ–
 void netdev_run_todo(void)
 {
 	struct list_head list;
@@ -3123,7 +3123,7 @@ void netdev_run_todo(void)
 
 	/* Snapshot list, allow later requests */
 	spin_lock(&net_todo_list_lock);
-	list_replace_init(&net_todo_list, &list);		// ½«net_todo_listÁ´±í¿½±´µ½ÁÙÊ±Á´±í£¬È»ºóÇå¿Õnet_todo_list
+	list_replace_init(&net_todo_list, &list);		// å°†net_todo_listé“¾è¡¨æ‹·è´åˆ°ä¸´æ—¶é“¾è¡¨ï¼Œç„¶åæ¸…ç©ºnet_todo_list
 	spin_unlock(&net_todo_list_lock);
 
 	while (!list_empty(&list)) {
@@ -3138,10 +3138,10 @@ void netdev_run_todo(void)
 			continue;
 		}
 
-		netdev_unregister_sysfs(dev);				// ½«¸ÃÍøÂçÉè±¸´ÓsysfsÎÄ¼şÏµÍ³ÖĞÒÆ³ı
-		dev->reg_state = NETREG_UNREGISTERED;		// ĞŞ¸Ä×´Ì¬ÎªNETREG_UNREGISTERED
+		netdev_unregister_sysfs(dev);				// å°†è¯¥ç½‘ç»œè®¾å¤‡ä»sysfsæ–‡ä»¶ç³»ç»Ÿä¸­ç§»é™¤
+		dev->reg_state = NETREG_UNREGISTERED;		// ä¿®æ”¹çŠ¶æ€ä¸ºNETREG_UNREGISTERED
 
-		netdev_wait_allrefs(dev);			// µÈ´ıÖ±µ½´ı×¢ÏúµÄÍøÂçÉè±¸Ã»ÓĞÒıÓÃÎªÖ¹
+		netdev_wait_allrefs(dev);			// ç­‰å¾…ç›´åˆ°å¾…æ³¨é”€çš„ç½‘ç»œè®¾å¤‡æ²¡æœ‰å¼•ç”¨ä¸ºæ­¢
 
 		/* paranoia */
 		BUG_ON(atomic_read(&dev->refcnt));
@@ -3153,7 +3153,7 @@ void netdev_run_todo(void)
 		 * after this 'dev' may point to freed up memory.
 		 */
 		if (dev->destructor)
-			dev->destructor(dev);			// µ÷ÓÃ×ÔÉíµÄdestructor()º¯Êı£¬Íê³É×¢Ïú¹ı³Ì
+			dev->destructor(dev);			// è°ƒç”¨è‡ªèº«çš„destructor()å‡½æ•°ï¼Œå®Œæˆæ³¨é”€è¿‡ç¨‹
 	}
 
 out:
@@ -3164,7 +3164,7 @@ out:
  *	alloc_netdev - allocate network device
  *	@sizeof_priv:	size of private data to allocate space for driver alloc_etherdrv()
  *	@name:		device name format string  "eth%d"
- *	@setup:		callback to initialize device		ÓÃÓÚÅäÖÆnet_device½á¹¹ÖĞµÄ²¿·ÖÓò£¬¼û: ether_setup()
+ *	@setup:		callback to initialize device		ç”¨äºé…åˆ¶net_deviceç»“æ„ä¸­çš„éƒ¨åˆ†åŸŸï¼Œè§: ether_setup()
  *
  *	Allocates a struct net_device with private data area for driver use
  *	and performs basic initialization.
@@ -3195,7 +3195,7 @@ struct net_device *alloc_netdev(int sizeof_priv, const char *name,
 	if (sizeof_priv)
 		dev->priv = netdev_priv(dev);
 
-	setup(dev);		// ÅäÖÆ³õÊ¼»¯net_device½á¹¹ÊµÀıµÄ²¿·Ö³ÉÔ±
+	setup(dev);		// é…åˆ¶åˆå§‹åŒ–net_deviceç»“æ„å®ä¾‹çš„éƒ¨åˆ†æˆå‘˜
 	strcpy(dev->name, name);
 	return dev;
 }
@@ -3205,8 +3205,8 @@ EXPORT_SYMBOL(alloc_netdev);
  *	free_netdev - free network device
  *	@dev: device
  *
- *	This function does the last stage of destroying an allocated device 
- * 	interface. The reference to the device object is released.  
+ *	This function does the last stage of destroying an allocated device
+ * 	interface. The reference to the device object is released.
  *	If this is the last reference then it will be freed.
  */
 void free_netdev(struct net_device *dev)
@@ -3227,9 +3227,9 @@ void free_netdev(struct net_device *dev)
 	kfree((char *)dev - dev->padded);
 #endif
 }
- 
+
 /* Synchronize with packet receive processing. */
-void synchronize_net(void) 
+void synchronize_net(void)
 {
 	might_sleep();
 	synchronize_rcu();
@@ -3265,8 +3265,8 @@ int unregister_netdevice(struct net_device *dev)
 
 	/* If device is running, close it first. */
 	if (dev->flags & IFF_UP)
-		dev_close(dev);				// ½ûÖ¹ÍøÂçÉè±¸
-	// ½«ÍøÂçÉè±¸´Ódev_baseÖĞÉ¾³ı£¬´Óhash±íÖĞÉ¾³ı
+		dev_close(dev);				// ç¦æ­¢ç½‘ç»œè®¾å¤‡
+	// å°†ç½‘ç»œè®¾å¤‡ä»dev_baseä¸­åˆ é™¤ï¼Œä»hashè¡¨ä¸­åˆ é™¤
 	/* And unlink it from device chain. */
 	for (dp = &dev_base; (d = *dp) != NULL; dp = &d->next) {
 		if (d == dev) {
@@ -3286,36 +3286,36 @@ int unregister_netdevice(struct net_device *dev)
 		return -ENODEV;
 	}
 
-	dev->reg_state = NETREG_UNREGISTERING;		// ĞŞ¸Ä×´Ì¬ÎªÈ¡Ïû×¢²áÖĞ
+	dev->reg_state = NETREG_UNREGISTERING;		// ä¿®æ”¹çŠ¶æ€ä¸ºå–æ¶ˆæ³¨å†Œä¸­
 
-	synchronize_net();							// Í¬²½Êı¾İ°üµÄ½ÓÊÕ´¦Àí
+	synchronize_net();							// åŒæ­¥æ•°æ®åŒ…çš„æ¥æ”¶å¤„ç†
 
 	/* Shutdown queueing discipline. */
-	dev_shutdown(dev);							// ÊÍ·ÅÓëÉè±¸Ïà¹ØµÄ¶ÓÁĞ¹æÔò
+	dev_shutdown(dev);							// é‡Šæ”¾ä¸è®¾å¤‡ç›¸å…³çš„é˜Ÿåˆ—è§„åˆ™
 
-	
+
 	/* Notify protocols, that we are about to destroy
 	   this device. They should clean all the things.
 	*/
 	raw_notifier_call_chain(&netdev_chain, NETDEV_UNREGISTER, dev);
-	
+
 	/*
 	 *	Flush the multicast chain
 	 */
-	dev_mc_discard(dev);		// ÊÍ·ÅÉèÖÃµ½ÍøÂçÉè±¸ÉÏµÄ×é²¥MACµØÖ·µÈĞÅÏ¢
+	dev_mc_discard(dev);		// é‡Šæ”¾è®¾ç½®åˆ°ç½‘ç»œè®¾å¤‡ä¸Šçš„ç»„æ’­MACåœ°å€ç­‰ä¿¡æ¯
 
 	if (dev->uninit)
-		dev->uninit(dev);		// µ÷ÓÃÇı¶¯×¢²áµÄÏú»Ùº¯Êı
+		dev->uninit(dev);		// è°ƒç”¨é©±åŠ¨æ³¨å†Œçš„é”€æ¯å‡½æ•°
 
 	/* Notifier chain MUST detach us from master device. */
 	BUG_TRAP(!dev->master);
 
 	/* Finish processing unregister after unlock */
-	net_set_todo(dev);		// Í¨¹ıÕâ¸öº¯Êı£¬µ÷ÓÃnet_run_todo()½áÊø×¢Ïú¹ı³Ì
+	net_set_todo(dev);		// é€šè¿‡è¿™ä¸ªå‡½æ•°ï¼Œè°ƒç”¨net_run_todo()ç»“æŸæ³¨é”€è¿‡ç¨‹
 
 	synchronize_net();
 
-	dev_put(dev);			// ¼õÉÙdevÒıÓÃ¼ÆÊı
+	dev_put(dev);			// å‡å°‘devå¼•ç”¨è®¡æ•°
 	return 0;
 }
 
@@ -3335,11 +3335,11 @@ void unregister_netdev(struct net_device *dev)
 {
 	rtnl_lock();
 	unregister_netdevice(dev);
-	rtnl_unlock();					// Áª¶¯µ½netdev_run_todo()º¯Êı
+	rtnl_unlock();					// è”åŠ¨åˆ°netdev_run_todo()å‡½æ•°
 }
 
 EXPORT_SYMBOL(unregister_netdev);
-// ÔÚCPU×´Ì¬·¢Éú±ä»¯ºó£¬±ÈÈçCPU_DEADÊ±ºò£¬ĞèÒª½«Õâ¸öCPUµÄ¹¤×÷¶ÓÁĞ½»¸øÁíÍâÒ»¸öCPU´¦Àí
+// åœ¨CPUçŠ¶æ€å‘ç”Ÿå˜åŒ–åï¼Œæ¯”å¦‚CPU_DEADæ—¶å€™ï¼Œéœ€è¦å°†è¿™ä¸ªCPUçš„å·¥ä½œé˜Ÿåˆ—äº¤ç»™å¦å¤–ä¸€ä¸ªCPUå¤„ç†
 static int dev_cpu_callback(struct notifier_block *nfb,
 			    unsigned long action,
 			    void *ocpu)
@@ -3479,26 +3479,26 @@ static int __init net_dev_init(void)
 
 	BUG_ON(!dev_boot_phase);
 
-	if (dev_proc_init())			// ÔÚprocÎÄ¼şÏµÍ³ÖĞ×¢²á /proc/net/dev /proc/net/softnet_stat
+	if (dev_proc_init())			// åœ¨procæ–‡ä»¶ç³»ç»Ÿä¸­æ³¨å†Œ /proc/net/dev /proc/net/softnet_stat
 		goto out;
 
-	if (netdev_sysfs_init())		// ÔÚsysÎÄ¼şÏµÍ³ÖĞ×¢²ánet½Úµã
+	if (netdev_sysfs_init())		// åœ¨sysæ–‡ä»¶ç³»ç»Ÿä¸­æ³¨å†ŒnetèŠ‚ç‚¹
 		goto out;
 
-	INIT_LIST_HEAD(&ptype_all);		
-	for (i = 0; i < 16; i++) 
-		INIT_LIST_HEAD(&ptype_base[i]);		// ³õÊ¼»¯ÍøÂç´¦Àíº¯ÊıÉ¢ÁĞ±í¡£ÕâĞ©º¯Êı´¦ÀíÊÕµ½²»Í¬Ğ­Òé×åµÄ±¨ÎÄ
+	INIT_LIST_HEAD(&ptype_all);
+	for (i = 0; i < 16; i++)
+		INIT_LIST_HEAD(&ptype_base[i]);		// åˆå§‹åŒ–ç½‘ç»œå¤„ç†å‡½æ•°æ•£åˆ—è¡¨ã€‚è¿™äº›å‡½æ•°å¤„ç†æ”¶åˆ°ä¸åŒåè®®æ—çš„æŠ¥æ–‡
 
 	for (i = 0; i < ARRAY_SIZE(dev_name_head); i++)
-		INIT_HLIST_HEAD(&dev_name_head[i]);	// ³õÊ¼»¯´æ·ÅÍøÂçÉè±¸µÄÉ¢ÁĞ±í£¬ÓÉname×÷ÎªkeyÖµ
+		INIT_HLIST_HEAD(&dev_name_head[i]);	// åˆå§‹åŒ–å­˜æ”¾ç½‘ç»œè®¾å¤‡çš„æ•£åˆ—è¡¨ï¼Œç”±nameä½œä¸ºkeyå€¼
 
 	for (i = 0; i < ARRAY_SIZE(dev_index_head); i++)
-		INIT_HLIST_HEAD(&dev_index_head[i]);// ³õÊ¼»¯´æ·ÅÍøÂçÉè±¸µÄÉ¢ÁĞ±í£¬ÓÉ½Ó¿ÚË÷Òı×÷ÎªkeyÖµ
+		INIT_HLIST_HEAD(&dev_index_head[i]);// åˆå§‹åŒ–å­˜æ”¾ç½‘ç»œè®¾å¤‡çš„æ•£åˆ—è¡¨ï¼Œç”±æ¥å£ç´¢å¼•ä½œä¸ºkeyå€¼
 
 	/*
 	 *	Initialise the packet receive queues.
 	 */
-	// ¸ÃforÑ­»·´¦ÀíÓëCPUÏà¹ØµÄ½ÓÊÕ¶ÓÁĞ
+	// è¯¥forå¾ªç¯å¤„ç†ä¸CPUç›¸å…³çš„æ¥æ”¶é˜Ÿåˆ—
 	for_each_possible_cpu(i) {
 		struct softnet_data *queue;
 
@@ -3508,20 +3508,20 @@ static int __init net_dev_init(void)
 		INIT_LIST_HEAD(&queue->poll_list);
 		set_bit(__LINK_STATE_START, &queue->backlog_dev.state);
 		queue->backlog_dev.weight = weight_p;
-		queue->backlog_dev.poll = process_backlog;		
+		queue->backlog_dev.poll = process_backlog;
 		atomic_set(&queue->backlog_dev.refcnt, 1);
 	}
 
-	netdev_dma_register();		// DMAÏà¹Ø
+	netdev_dma_register();		// DMAç›¸å…³
 
-	dev_boot_phase = 0;			// ±êÊ¶Éè±¸²ã³õÊ¼»¯Íê³É
-	// ×¢²áÍøÂçÊÕ·¢°üÈíÖĞ¶Ï
+	dev_boot_phase = 0;			// æ ‡è¯†è®¾å¤‡å±‚åˆå§‹åŒ–å®Œæˆ
+	// æ³¨å†Œç½‘ç»œæ”¶å‘åŒ…è½¯ä¸­æ–­
 	open_softirq(NET_TX_SOFTIRQ, net_tx_action, NULL);
 	open_softirq(NET_RX_SOFTIRQ, net_rx_action, NULL);
-	// ÔÚÍ¨ÖªÁ´ÉÏ²âÊÔÒ»¸ö»Øµ÷º¯Êı£¬ÓÃÀ´ÏìÓ¦CPUÈÈ²å°ÎÊÂ¼ş¡£
+	// åœ¨é€šçŸ¥é“¾ä¸Šæµ‹è¯•ä¸€ä¸ªå›è°ƒå‡½æ•°ï¼Œç”¨æ¥å“åº”CPUçƒ­æ’æ‹”äº‹ä»¶ã€‚
 	hotcpu_notifier(dev_cpu_callback, 0);
-	dst_init();					// ³õÊ¼»¯Ä¿µÄÂ·ÓÉ»º´æ
-	dev_mcast_init();			// ³õÊ¼»¯ÍøÂçÉè±¸²ã×é²¥Ä£¿é¡£ÔÚprocÖĞÔö¼Ó /proc/net/dev_mcast
+	dst_init();					// åˆå§‹åŒ–ç›®çš„è·¯ç”±ç¼“å­˜
+	dev_mcast_init();			// åˆå§‹åŒ–ç½‘ç»œè®¾å¤‡å±‚ç»„æ’­æ¨¡å—ã€‚åœ¨procä¸­å¢åŠ  /proc/net/dev_mcast
 	rc = 0;
 out:
 	return rc;
