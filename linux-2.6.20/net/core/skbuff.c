@@ -142,10 +142,10 @@ EXPORT_SYMBOL(skb_truesize_bug);
  *	%GFP_ATOMIC.
  */
 /*
-	size: ´ı·ÖÅäSKBµÄÏßĞÔ´æ´¢ÇøµÄ³¤¶È
-	gfp_mask: ·ÖÅäÄÚ´æµÄ·½Ê½,¼û __GFP_DMA  GFP_ATOMIC
-	fclone: Ô¤²âÊÇ·ñ»á±»¿ËÂ¡£¬¾ö¶¨´ÓÄÄ¸ö¸ßËÙ»º´æÇøÖĞ·ÖÅä(¼ûskb_init)
-	node: µ±Ö§³ÖNUMA(·Ç¾ùÔÈÖÊ´æ´¢½á¹¹)Ê±£¬ÓÃÓÚÈ·¶¨ÔÚÄÄ¸öÇøÓòÖĞ·ÖÅäSKB
+	size: å¾…åˆ†é…SKBçš„çº¿æ€§å­˜å‚¨åŒºçš„é•¿åº¦
+	gfp_mask: åˆ†é…å†…å­˜çš„æ–¹å¼,è§ __GFP_DMA  GFP_ATOMIC
+	fclone: é¢„æµ‹æ˜¯å¦ä¼šè¢«å…‹éš†ï¼Œå†³å®šä»å“ªä¸ªé«˜é€Ÿç¼“å­˜åŒºä¸­åˆ†é…(è§skb_init)
+	node: å½“æ”¯æŒNUMA(éå‡åŒ€è´¨å­˜å‚¨ç»“æ„)æ—¶ï¼Œç”¨äºç¡®å®šåœ¨å“ªä¸ªåŒºåŸŸä¸­åˆ†é…SKB
  */
 struct sk_buff *__alloc_skb(unsigned int size, gfp_t gfp_mask,
 			    int fclone, int node)
@@ -158,6 +158,7 @@ struct sk_buff *__alloc_skb(unsigned int size, gfp_t gfp_mask,
 	cache = fclone ? skbuff_fclone_cache : skbuff_head_cache;
 
 	/* Get the HEAD */
+    // å»æ‰__GFP_DMAç‰¹æ€§ï¼ŒDMAå†…å­˜æœ‰ç‰¹æ®Šç”¨é€”ï¼Œæ²¡æœ‰å¿…è¦ç”¨æ¥åˆ†é…SKBæè¿°ç¬¦
 	skb = kmem_cache_alloc_node(cache, gfp_mask & ~__GFP_DMA, node);
 	if (!skb)
 		goto out;
@@ -336,9 +337,9 @@ void kfree_skbmem(struct sk_buff *skb)
 {
 	struct sk_buff *other;
 	atomic_t *fclone_ref;
-	// ÊÍ·ÅSKBÖĞµÄdata²¿·Ö¡£°üÀ¨SG·ÖÉ¢¾ÛºÏI/O£¬skb_shared_info
+	// é‡Šæ”¾SKBä¸­çš„dataéƒ¨åˆ†ã€‚åŒ…æ‹¬SGåˆ†æ•£èšåˆI/Oï¼Œskb_shared_info
 	skb_release_data(skb);
-	// ¸ù¾İSKB¿éÖĞµÄ¿ËÂ¡ÀàĞÍ£¬·Ö±ğ´¦Àí£¬»ØÊÕSKB½á¹¹ËùÓÃÄÚ´æ¿é
+	// æ ¹æ®SKBå—ä¸­çš„å…‹éš†ç±»å‹ï¼Œåˆ†åˆ«å¤„ç†ï¼Œå›æ”¶SKBç»“æ„æ‰€ç”¨å†…å­˜å—
 	switch (skb->fclone) {
 	case SKB_FCLONE_UNAVAILABLE:
 		kmem_cache_free(skbuff_head_cache, skb);
@@ -376,13 +377,13 @@ void kfree_skbmem(struct sk_buff *skb)
 
 void __kfree_skb(struct sk_buff *skb)
 {
-	dst_release(skb->dst);			// ÊÍ·Å¶ÔÄ¿µÄÂ·ÓÉ»º´æ±íµÄÒıÓÃ
+	dst_release(skb->dst);			// é‡Šæ”¾å¯¹ç›®çš„è·¯ç”±ç¼“å­˜è¡¨çš„å¼•ç”¨
 #ifdef CONFIG_XFRM
 	secpath_put(skb->sp);
 #endif
-	if (skb->destructor) {			
+	if (skb->destructor) {
 		WARN_ON(in_irq());
-		skb->destructor(skb);		// µ÷ÓÃÎö¹¹º¯Êı
+		skb->destructor(skb);		// è°ƒç”¨ææ„å‡½æ•°
 	}
 #ifdef CONFIG_NETFILTER
 	nf_conntrack_put(skb->nfct);
@@ -401,7 +402,7 @@ void __kfree_skb(struct sk_buff *skb)
 #endif
 #endif
 
-	kfree_skbmem(skb);		// ÕæÕı»ØÊÕÄÚ´æµÄ¹ı³Ì
+	kfree_skbmem(skb);		// çœŸæ­£å›æ”¶å†…å­˜çš„è¿‡ç¨‹
 }
 
 /**
@@ -590,7 +591,7 @@ static void copy_skb_header(struct sk_buff *new, const struct sk_buff *old)
  *	function is not recommended for use in circumstances when only
  *	header is going to be modified. Use pskb_copy() instead.
  */
-// ¸´ÖÆSKB   °üÀ¨SKB±¾Éí´æ´¢½á¹¹£¬ÏßĞÔ´æ´¢Çø¡¢·ÖÉ¢¾ÛºÏI/O
+// å¤åˆ¶SKB   åŒ…æ‹¬SKBæœ¬èº«å­˜å‚¨ç»“æ„ï¼Œçº¿æ€§å­˜å‚¨åŒºã€åˆ†æ•£èšåˆI/O
 struct sk_buff *skb_copy(const struct sk_buff *skb, gfp_t gfp_mask)
 {
 	int headerlen = skb->data - skb->head;
@@ -629,8 +630,8 @@ struct sk_buff *skb_copy(const struct sk_buff *skb, gfp_t gfp_mask)
  *	or the pointer to the buffer on success.
  *	The returned buffer has a reference count of 1.
  */
-// ¸Ãº¯Êı SKB½á¹¹¡¢SKBÖĞµÄÏßĞÔ´æ´¢Çø
-// ·ÖÉ¢¾ÛºÏI/O²¿·Ö²»×ö¸´ÖÆ£¬Ôö¼ÓÒıÓÃ
+// è¯¥å‡½æ•° SKBç»“æ„ã€SKBä¸­çš„çº¿æ€§å­˜å‚¨åŒº
+// åˆ†æ•£èšåˆI/Oéƒ¨åˆ†ä¸åšå¤åˆ¶ï¼Œå¢åŠ å¼•ç”¨
 struct sk_buff *pskb_copy(struct sk_buff *skb, gfp_t gfp_mask)
 {
 	/*
@@ -739,7 +740,7 @@ nodata:
 }
 
 /* Make private copy of skb with writable head and some headroom */
-// ¸ù¾İÒ»¸öskbÉêÇëÒ»¸öĞÂµÄSKB£¬²¢±£Ö¤ĞÂµÄSKBÖĞÓĞÖ¸¶¨µÄheadroom¿Õ¼ä
+// æ ¹æ®ä¸€ä¸ªskbç”³è¯·ä¸€ä¸ªæ–°çš„SKBï¼Œå¹¶ä¿è¯æ–°çš„SKBä¸­æœ‰æŒ‡å®šçš„headroomç©ºé—´
 struct sk_buff *skb_realloc_headroom(struct sk_buff *skb, unsigned int headroom)
 {
 	struct sk_buff *skb2;
@@ -827,12 +828,12 @@ struct sk_buff *skb_copy_expand(const struct sk_buff *skb,
  *
  *	May return error in out of memory cases. The skb is freed on error.
  */
- 
+
 int skb_pad(struct sk_buff *skb, int pad)
 {
 	int err;
 	int ntail;
-	
+
 	/* If the skbuff is non linear tailroom is always zero.. */
 	if (!skb_cloned(skb) && skb_tailroom(skb) >= pad) {
 		memset(skb->data+skb->len, 0, pad);
@@ -859,8 +860,8 @@ int skb_pad(struct sk_buff *skb, int pad)
 free_skb:
 	kfree_skb(skb);
 	return err;
-}	
- 
+}
+
 /* Trims skb to length len. It can change skb pointers.
  */
 
@@ -1666,7 +1667,7 @@ static inline void skb_split_no_header(struct sk_buff *skb,
  * @skb1: the buffer to receive the second part
  * @len: new length for skb
  */
-// ²ğ·ÖSKB»º´æÇø£¬Ò»·ÖÎª¶ş£¬skb1ÎªĞÂÉú³ÉµÄSKB¿é
+// æ‹†åˆ†SKBç¼“å­˜åŒºï¼Œä¸€åˆ†ä¸ºäºŒï¼Œskb1ä¸ºæ–°ç”Ÿæˆçš„SKBå—
 void skb_split(struct sk_buff *skb, struct sk_buff *skb1, const u32 len)
 {
 	int pos = skb_headlen(skb);
@@ -2056,11 +2057,13 @@ EXPORT_SYMBOL_GPL(skb_segment);
 
 void __init skb_init(void)
 {
+    // skbé«˜é€Ÿç¼“å­˜
 	skbuff_head_cache = kmem_cache_create("skbuff_head_cache",
 					      sizeof(struct sk_buff),
 					      0,
 					      SLAB_HWCACHE_ALIGN|SLAB_PANIC,
 					      NULL, NULL);
+    // ä¸¤å€å¤§å°åˆ›å»ºçš„skbé«˜é€Ÿç¼“å­˜ï¼Œç”¨äºå¿«é€Ÿå…‹éš†
 	skbuff_fclone_cache = kmem_cache_create("skbuff_fclone_cache",
 						(2*sizeof(struct sk_buff)) +
 						sizeof(atomic_t),

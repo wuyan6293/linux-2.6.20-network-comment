@@ -183,7 +183,7 @@ struct skb_timeval {
 
 
 enum {
-	SKB_FCLONE_UNAVAILABLE,         // 未被克隆
+	SKB_FCLONE_UNAVAILABLE,         // 不可克隆，在刚被创建的父-子SKB对中，子skb也会被初始化成这个状态，表示还不可用
 	SKB_FCLONE_ORIG,                // 父SKB 可以被克隆
 	SKB_FCLONE_CLONE,               // 子SKB，从父SKB克隆得到
 };
@@ -1189,6 +1189,9 @@ static inline struct sk_buff *__dev_alloc_skb(unsigned int length,
  *	%NULL is returned if there is no free memory. Although this function
  *	allocates memory it can be called from an interrupt.
  */
+/*
+ *  该函数一般被驱动程序用在中断上下文中，所以会指定GFP_ATOMIC原子操作，并在head 和data之前预留16字节的硬件头
+ * */
 static inline struct sk_buff *dev_alloc_skb(unsigned int length)
 {
 	return __dev_alloc_skb(length, GFP_ATOMIC);
